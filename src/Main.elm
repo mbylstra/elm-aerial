@@ -9,13 +9,21 @@ import Geo
         , latLngToWorldPixelPoint
         , worldPixelPointToSlippyTileNumber
         , getTileTopLeftWorldPixelPoint
-        , Point2DInt
         )
+import VectorMath exposing (Vector2DInt, Point2DInt, difference, negate)
 import Constants exposing (slippyTileSize)
-import Html exposing (Html, beginnerProgram, img, input, div)
-import Html.Attributes exposing (src, type_, value, style)
-import Html.Events exposing (onInput)
+import Html exposing (Html, beginnerProgram, img, input, div, text)
+import Html.Attributes exposing (src, type_, value, style, draggable)
+import Html.Events exposing (onInput, onMouseDown, onMouseUp, onMouseLeave, on)
 import Util exposing (cartesianProduct)
+import Maybe.Extra
+
+
+-- import DOM
+-- import Json.Decode as Json
+
+import Mouse
+import MouseEvents exposing (relPos, onMouseEnter)
 
 
 initLatLng : LatLng
@@ -38,7 +46,22 @@ type alias Model =
     , zoom : Int
     , mapWidthPx : Int
     , mapHeightPx : Int
+    , maybeMouseOver : Maybe MouseOverState
     }
+
+
+getDraggingOffset : MouseOverState -> Maybe Vector2DInt
+getDraggingOffset mouseOverState =
+    mouseOverState.down
+        |> Maybe.map
+            (.startPosition
+                >> difference mouseOverState.position
+                >> VectorMath.negate
+            )
+
+
+type alias MouseOverState =
+    { position : Mouse.Position, down : Maybe { startPosition : Mouse.Position } }
 
 
 model : Model
@@ -47,6 +70,7 @@ model =
     , zoom = initZoom
     , mapWidthPx = 1000
     , mapHeightPx = 700
+    , maybeMouseOver = Nothing
     }
 
 
@@ -54,6 +78,11 @@ type Msg
     = UpdateLat String
     | UpdateLng String
     | UpdateZoom String
+    | MouseDown Mouse.Position
+    | MouseUp
+    | MouseMove Mouse.Position
+    | MouseEnter Mouse.Position
+    | MouseLeave
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -99,6 +128,52 @@ update msg model =
             in
                 newModel ! []
 
+        MouseDown position ->
+            let
+                maybeMouseOver =
+                    model.maybeMouseOver
+                        |> Maybe.map
+                            (\mouseOverState -> { mouseOverState | down = Just { startPosition = position } })
+            in
+                { model | maybeMouseOver = maybeMouseOver } ! []
+
+        MouseUp ->
+            let
+                maybeMouseOver =
+                    model.maybeMouseOver
+                        |> Maybe.map
+                            (\mouseOverState -> { mouseOverState | down = Nothing })
+            in
+                { model | maybeMouseOver = maybeMouseOver } ! []
+
+        MouseMove position ->
+            -- the annoying thing is that we need to preserver the mouseDown state
+            -- which is packaged inside the maybe
+            let
+                maybeMouseOver =
+                    model.maybeMouseOver
+                        |> Maybe.map
+                            (\mouseOverState -> { mouseOverState | position = position })
+            in
+                { model | maybeMouseOver = maybeMouseOver } ! []
+
+        MouseEnter position ->
+            { model | maybeMouseOver = Just { position = position, down = Nothing } } ! []
+
+        MouseLeave ->
+            { model | maybeMouseOver = Nothing } ! []
+
+
+
+-- let
+--     maybeMouseOver =
+--         model.maybeMouseOver
+--             |> Maybe.map (\({ position } as mouseOverState) -> { mouseOverState | down = True })
+--             |> Maybe.withDefault
+-- in
+--     { model | maybeMouseOver = maybeMouseOver } ! []
+-- MouseUp ->
+
 
 view : Model -> Html Msg
 view model =
@@ -116,6 +191,7 @@ view model =
             , input [ type_ "number", onInput UpdateLat, value <| toString model.latLng.lat ] []
             , input [ type_ "number", onInput UpdateLng, value <| toString model.latLng.lng ] []
             , input [ type_ "number", value <| toString model.zoom, onInput UpdateZoom ] []
+            , div [] [ text <| "mouse state: " ++ toString model.maybeMouseOver ]
             ]
 
 
@@ -215,36 +291,67 @@ getTileViewModels model =
 --     |> .tileViewModels
 
 
-tileView : Model -> TileViewModel -> Html msg
-tileView model tileViewModel =
+tileView : { model : Model, offset : Point2DInt } -> TileViewModel -> Html msg
+tileView { model, offset } tileViewModel =
     let
+        threeD =
+            True
+
+        threeD =
+            False
+
         style_ =
             [ ( "position", "absolute" )
             , ( "left", (toString tileViewModel.viewportPoint.x) ++ "px" )
             , ( "top", (toString tileViewModel.viewportPoint.y) ++ "px" )
+            , ( "pointerEvents", "None" )
+            , ( "transform", transform )
             ]
+
+        transform =
+            "translate3d(" ++ toString offset.x ++ "px," ++ toString offset.y ++ "px, 0)"
 
         url =
             slippyTileUrl "a" tileViewModel.tileNumber
     in
-        img [ src url, style style_ ] []
+        img [ draggable "false", src url, style style_ ] []
 
 
-mapViewportView : Model -> Html msg
+mapViewportView : Model -> Html Msg
 mapViewportView model =
     let
         tileViewModels =
             getTileViewModels model
+
+        tileOffset : Vector2DInt
+        tileOffset =
+            model.maybeMouseOver
+                |> Maybe.map getDraggingOffset
+                |> Maybe.Extra.join
+                |> Maybe.withDefault { x = 0, y = 0 }
+
+        -- this is a legitimate withDefault. We don't want to offset the tiles
+        -- if the map is not being dragged
+        -- so what we want to do is
+        -- if dragging, then get the drag offset and apply that to all images
+        -- using translate2D, and use withDefault to set the offset to { x = 0, y = 0}
     in
         div
-            [ style
+            [ MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
+            , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
+            , onMouseUp MouseUp
+            , onMouseLeave MouseLeave
+            , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
+              -- , on "mousemove" (DOM.target DOM.offsetWidth |> Json.map MouseMoved)
+            , style
                 [ ( "position", "relative" )
                 , ( "overflow", "hidden" )
                 , ( "width", (toString model.mapWidthPx) ++ "px" )
                 , ( "height", (toString model.mapHeightPx) ++ "px" )
                 ]
             ]
-            (List.map (tileView model) tileViewModels)
+            -- Html Float myButton = button [ on "click" (target offsetWidth) ] [ text "Click me!" ]
+            (List.map (tileView { model = model, offset = tileOffset }) tileViewModels)
 
 
 

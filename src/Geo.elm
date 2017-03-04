@@ -15,12 +15,6 @@ type alias Point2DFloat =
     }
 
 
-type alias Point2DInt =
-    { x : Int
-    , y : Int
-    }
-
-
 {-| The bounds are 0.0 - 1.0 in the x and y axis.
  If you go to the north pole from Alaska you will be near (0.0, 0.0)
  and if you go to the south pole from New zealand you be near (1.0, 1.0).
@@ -70,20 +64,73 @@ sphericalMercatorPointToWorldPixelPoint zoom { x, y } =
         worldMapWidthInTiles =
             Debug.log "worldMapWidthInTiles" (2 ^ zoom)
 
-        worldMapHeightIntTiles =
-            worldMapWidthInTiles
-
         worldMapWidthInPixels =
             slippyTileSize * worldMapWidthInTiles
-
-        worldMapHeightInPixels =
-            Debug.log "worldMapWidthInPixels" worldMapWidthInPixels
     in
         Debug.log "world pixel point" <|
             { x = x * (toFloat worldMapWidthInPixels) |> floor
-            , y = y * (toFloat worldMapHeightInPixels) |> floor
+            , y = y * (toFloat worldMapWidthInPixels) |> floor
             , zoom = zoom
             }
+
+
+worldPixelPointToSphericalMercatorPoint : Int -> WorldMapPixelPoint -> NormalizedSphericalMercatorPoint
+worldPixelPointToSphericalMercatorPoint zoom { x, y } =
+    let
+        worldMapWidthInTiles =
+            2 ^ zoom
+
+        worldMapWidthInPixels =
+            slippyTileSize * worldMapWidthInTiles
+    in
+        Debug.log "world pixel point" <|
+            { x = (toFloat x) / (toFloat worldMapWidthInPixels)
+            , y = (toFloat y) / (toFloat worldMapWidthInPixels)
+            }
+
+
+worldPixelPointToLatLng : Int -> WorldMapPixelPoint -> LatLng
+worldPixelPointToLatLng zoom point =
+    point
+        |> worldPixelPointToSphericalMercatorPoint zoom
+        |> sphericalMercatorPointToLatLng
+
+
+sphericalMercatorPointToLatLng : NormalizedSphericalMercatorPoint -> LatLng
+sphericalMercatorPointToLatLng { x, y } =
+    -- we need to turn y into radians (0 - 1.0 = 180.0 = PI)
+    let
+        yInRadians =
+            (y - 0.5) * pi
+
+        funkyShit =
+            atan (e ^ yInRadians)
+    in
+        { lat = (funkyShit / (pi / 4.0) - 1.0) * 90.0
+        , lng = (x * 360.0) - 180.0
+        }
+
+
+
+-- RAD2DEG = 180 / Math.PI;
+-- PI_4 = Math.PI / 4;
+-- { return (Math.atan(Math.exp (y / RAD2DEG)) / PI_4 - 1) * 90; }
+-- { x = (lng + 180.0) / 360.0
+-- , y =
+--     (1.0
+--         - (((logBase e
+--                 (tan
+--                     ((pi / 4)
+--                         + ((degrees lat) / 2)
+--                     )
+--                 )
+--             )
+--                 + pi
+--            )
+--             / (2 * pi)
+--           )
+--     )
+-- }
 
 
 worldPixelPointToSlippyTileNumber : WorldMapPixelPoint -> SlippyTileNumber
