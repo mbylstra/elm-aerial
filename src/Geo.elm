@@ -1,6 +1,6 @@
 module Geo exposing (..)
 
-import Constants exposing (slippyTileSize, sphericalMercatorEarthRadiusMeters)
+-- import Constants exposing (tileSize, sphericalMercatorEarthRadiusMeters)
 
 
 type alias LatLng =
@@ -15,103 +15,77 @@ type alias Point2DFloat =
     }
 
 
-{-| The bounds are 0.0 - 1.0 in the x and y axis.
- If you go to the north pole from Alaska you will be near (0.0, 0.0)
- and if you go to the south pole from New zealand you be near (1.0, 1.0).
--}
-type alias NormalizedSphericalMercatorPoint =
-    Point2DFloat
 
-
-type alias WorldMapPixelPoint =
-    { x : Int
-    , y : Int
-    , zoom : Int
-    }
-
-
-type alias SlippyTileNumber =
-    { x : Int
-    , y : Int
-    , zoom : Int
-    }
-
-
-latLngToNormalizedSphericalMercatorPoint : LatLng -> NormalizedSphericalMercatorPoint
-latLngToNormalizedSphericalMercatorPoint { lat, lng } =
-    Debug.log "merc point" <|
-        { x = (lng + 180.0) / 360.0
-        , y =
-            (1.0
-                - (((logBase e
-                        (tan
-                            ((pi / 4)
-                                + ((degrees lat) / 2)
-                            )
-                        )
-                    )
-                        + pi
-                   )
-                    / (2 * pi)
-                  )
-            )
-        }
-
-
-sphericalMercatorPointToWorldPixelPoint : Int -> NormalizedSphericalMercatorPoint -> WorldMapPixelPoint
-sphericalMercatorPointToWorldPixelPoint zoom { x, y } =
-    let
-        worldMapWidthInTiles =
-            Debug.log "worldMapWidthInTiles" (2 ^ zoom)
-
-        worldMapWidthInPixels =
-            slippyTileSize * worldMapWidthInTiles
-    in
-        Debug.log "world pixel point" <|
-            { x = x * (toFloat worldMapWidthInPixels) |> floor
-            , y = y * (toFloat worldMapWidthInPixels) |> floor
-            , zoom = zoom
-            }
-
-
-worldPixelPointToSphericalMercatorPoint : Int -> WorldMapPixelPoint -> NormalizedSphericalMercatorPoint
-worldPixelPointToSphericalMercatorPoint zoom { x, y } =
-    let
-        worldMapWidthInTiles =
-            2 ^ zoom
-
-        worldMapWidthInPixels =
-            slippyTileSize * worldMapWidthInTiles
-    in
-        Debug.log "world pixel point" <|
-            { x = (toFloat x) / (toFloat worldMapWidthInPixels)
-            , y = (toFloat y) / (toFloat worldMapWidthInPixels)
-            }
-
-
-worldPixelPointToLatLng : Int -> WorldMapPixelPoint -> LatLng
-worldPixelPointToLatLng zoom point =
-    point
-        |> worldPixelPointToSphericalMercatorPoint zoom
-        |> sphericalMercatorPointToLatLng
-
-
-sphericalMercatorPointToLatLng : NormalizedSphericalMercatorPoint -> LatLng
-sphericalMercatorPointToLatLng { x, y } =
-    -- we need to turn y into radians (0 - 1.0 = 180.0 = PI)
-    let
-        yInRadians =
-            (y - 0.5) * pi
-
-        funkyShit =
-            atan (e ^ yInRadians)
-    in
-        { lat = (funkyShit / (pi / 4.0) - 1.0) * 90.0
-        , lng = (x * 360.0) - 180.0
-        }
-
-
-
+-- {-| The bounds are 0.0 - 1.0 in the x and y axis.
+--  If you go to the north pole from Alaska you will be near (0.0, 0.0)
+--  and if you go to the south pole from New zealand you be near (1.0, 1.0).
+-- -}
+-- type alias NormalizedSphericalMercatorPoint =
+--     Point2DFloat
+-- latLngToNormalizedSphericalMercatorPoint : LatLng -> NormalizedSphericalMercatorPoint
+-- latLngToNormalizedSphericalMercatorPoint { lat, lng } =
+--     Debug.log "merc point" <|
+--         { x = (lng + 180.0) / 360.0
+--         , y =
+--             (1.0
+--                 - (((logBase e
+--                         (tan
+--                             ((pi / 4)
+--                                 + ((degrees lat) / 2)
+--                             )
+--                         )
+--                     )
+--                         + pi
+--                    )
+--                     / (2 * pi)
+--                   )
+--             )
+--         }
+-- sphericalMercatorPointToWorldPixelPoint : Int -> NormalizedSphericalMercatorPoint -> WorldMapPixelPoint
+-- sphericalMercatorPointToWorldPixelPoint zoom { x, y } =
+--     let
+--         worldMapWidthInTiles =
+--             Debug.log "worldMapWidthInTiles" (2 ^ zoom)
+--
+--         worldMapWidthInPixels =
+--             tileSize * worldMapWidthInTiles
+--     in
+--         Debug.log "world pixel point" <|
+--             { x = x * (toFloat worldMapWidthInPixels) |> floor
+--             , y = y * (toFloat worldMapWidthInPixels) |> floor
+--             , zoom = zoom
+--             }
+-- worldPixelPointToSphericalMercatorPoint : Int -> WorldMapPixelPoint -> NormalizedSphericalMercatorPoint
+-- worldPixelPointToSphericalMercatorPoint zoom { x, y } =
+--     let
+--         worldMapWidthInTiles =
+--             2 ^ zoom
+--
+--         worldMapWidthInPixels =
+--             tileSize * worldMapWidthInTiles
+--     in
+--         Debug.log "world pixel point" <|
+--             { x = (toFloat x) / (toFloat worldMapWidthInPixels)
+--             , y = (toFloat y) / (toFloat worldMapWidthInPixels)
+--             }
+-- worldPixelPointToLatLng : Int -> WorldMapPixelPoint -> LatLng
+-- worldPixelPointToLatLng zoom point =
+--     point
+--         |> worldPixelPointToSphericalMercatorPoint zoom
+--         |> sphericalMercatorPointToLatLng
+-- sphericalMercatorPointToLatLng : NormalizedSphericalMercatorPoint -> LatLng
+-- sphericalMercatorPointToLatLng { x, y } =
+--     -- we need to turn y into radians (0 - 1.0 = 180.0 = PI)
+--     let
+--         yInRadians =
+--             (y - 0.5) * pi
+--
+--         funkyShit =
+--             atan (e ^ yInRadians)
+--     in
+--         { lat = (funkyShit / (pi / 4.0) - 1.0) * 90.0
+--         , lng = (x * 360.0) - 180.0
+--         }
 -- RAD2DEG = 180 / Math.PI;
 -- PI_4 = Math.PI / 4;
 -- { return (Math.atan(Math.exp (y / RAD2DEG)) / PI_4 - 1) * 90; }
@@ -131,51 +105,12 @@ sphericalMercatorPointToLatLng { x, y } =
 --           )
 --     )
 -- }
-
-
-worldPixelPointToSlippyTileNumber : WorldMapPixelPoint -> SlippyTileNumber
-worldPixelPointToSlippyTileNumber { x, y, zoom } =
-    { x = x // slippyTileSize
-    , y = y // slippyTileSize
-    , zoom = zoom
-    }
-
-
-latLngToSlippyTileNumber : Int -> LatLng -> SlippyTileNumber
-latLngToSlippyTileNumber zoom latLng =
-    Debug.log "slippyTileNumber"
-        (latLng
-            |> latLngToNormalizedSphericalMercatorPoint
-            |> sphericalMercatorPointToWorldPixelPoint zoom
-            |> worldPixelPointToSlippyTileNumber
-        )
-
-
-latLngToWorldPixelPoint : Int -> LatLng -> WorldMapPixelPoint
-latLngToWorldPixelPoint zoom latLng =
-    latLng
-        |> latLngToNormalizedSphericalMercatorPoint
-        |> sphericalMercatorPointToWorldPixelPoint zoom
-
-
-getTileTopLeftWorldPixelPoint : SlippyTileNumber -> WorldMapPixelPoint
-getTileTopLeftWorldPixelPoint slippyTileNumber =
-    { x = slippyTileNumber.x * slippyTileSize
-    , y = slippyTileNumber.y * slippyTileSize
-    , zoom = slippyTileNumber.zoom
-    }
-
-
-slippyTileUrl : String -> SlippyTileNumber -> String
-slippyTileUrl subdomain { x, y, zoom } =
-    let
-        ( xS, yS, zS ) =
-            ( toString x, toString y, toString zoom )
-    in
-        "http://" ++ subdomain ++ ".tile.osm.org/" ++ zS ++ "/" ++ xS ++ "/" ++ yS ++ ".png"
-
-
-
+--         )
+-- latLngToWorldPixelPoint : Int -> LatLng -> WorldMapPixelPoint
+-- latLngToWorldPixelPoint zoom latLng =
+--     latLng
+--         |> latLngToNormalizedSphericalMercatorPoint
+--         |> sphericalMercatorPointToWorldPixelPoint zoom
 -- Another thing to point out is that converting latLng To Meters is a bit pointless,
 -- as all we really care about is the value from 0.0 -> 1.0 (we don't really care
 -- about how big the earth is). It is useful if we want to measure distances

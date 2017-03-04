@@ -1,13 +1,9 @@
 module Constants exposing (..)
 
-
-slippyTileSize : Int
-slippyTileSize =
-    256
-
-
 {-| in meters on the equator
 -}
+
+
 sphericalMercatorEarthRadiusMeters : Float
 sphericalMercatorEarthRadiusMeters =
     6378137

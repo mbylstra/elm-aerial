@@ -1,17 +1,32 @@
 module Main exposing (main)
 
-import Geo
+-- import Geo
+--     exposing
+--         ( LatLng
+--         , slippyTileUrl
+--         , latLngToSlippyTileNumber
+--         , SlippyTileNumber
+--         , latLngToWorldPixelPoint
+--         , worldPixelPointToSlippyTileNumber
+--         , getTileTopLeftWorldPixelPoint
+--         )
+
+import SlippyTiles
     exposing
-        ( LatLng
-        , slippyTileUrl
-        , latLngToSlippyTileNumber
-        , SlippyTileNumber
+        ( tileSize
         , latLngToWorldPixelPoint
+        , SlippyTileNumber
+        , latLngToSlippyTileNumber
+        , slippyTileUrl
         , worldPixelPointToSlippyTileNumber
         , getTileTopLeftWorldPixelPoint
         )
+import Geo exposing (LatLng)
 import VectorMath exposing (Vector2DInt, Point2DInt, difference, negate)
-import Constants exposing (slippyTileSize)
+
+
+-- import Constants exposing (tileSize)
+
 import Html exposing (Html, beginnerProgram, img, input, div, text)
 import Html.Attributes exposing (src, type_, value, style, draggable)
 import Html.Events exposing (onInput, onMouseDown, onMouseUp, onMouseLeave, on)
@@ -240,13 +255,13 @@ getTileViewModels model =
         numColumns =
             Debug.log "numColumns" <|
                 (viewportBottomRightWorldPixel.x - topLeftTileWorldPixelPoint.x)
-                    // slippyTileSize
+                    // tileSize
                     + 1
 
         numRows =
             Debug.log "numRows" <|
                 (viewportBottomRightWorldPixel.y - topLeftTileWorldPixelPoint.y)
-                    // slippyTileSize
+                    // tileSize
                     + 1
 
         matrix : List ( Int, Int )
@@ -258,13 +273,13 @@ getTileViewModels model =
             let
                 -- we really want to use translation functions here? Maybe use opensolid/geometry?
                 currTileTopLeftViewportPoint =
-                    { x = topLeftTileViewportPoint.x + (viewportTileX * slippyTileSize)
-                    , y = topLeftTileViewportPoint.y + (viewportTileY * slippyTileSize)
+                    { x = topLeftTileViewportPoint.x + (viewportTileX * tileSize)
+                    , y = topLeftTileViewportPoint.y + (viewportTileY * tileSize)
                     }
 
                 currTileBottomRightViewportPoint =
-                    { x = currTileTopLeftViewportPoint.x + slippyTileSize
-                    , y = currTileTopLeftViewportPoint.y + slippyTileSize
+                    { x = currTileTopLeftViewportPoint.x + tileSize
+                    , y = currTileTopLeftViewportPoint.y + tileSize
                     }
             in
                 { tileNumber =
@@ -297,9 +312,8 @@ tileView { model, offset } tileViewModel =
         threeD =
             True
 
-        threeD =
-            False
-
+        -- threeD =
+        --     False
         style_ =
             [ ( "position", "absolute" )
             , ( "left", (toString tileViewModel.viewportPoint.x) ++ "px" )
