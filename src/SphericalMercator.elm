@@ -69,3 +69,23 @@ projectLngToMapWidth lng width =
 projectLatToMapWidth : Float -> Float -> Float
 projectLatToMapWidth lat width =
     (latToProjectedRadians lat / pi) * (width / 2)
+
+
+unprojectLngFromMapWidth : Float -> Float -> Float
+unprojectLngFromMapWidth x width =
+    lngFromProjectedRadians ((x / (width / 2)) * pi)
+
+
+unprojectLatFromMapWidth : Float -> Float -> Float
+unprojectLatFromMapWidth y width =
+    latFromProjectedRadians ((y / (width / 2)) * pi)
+
+
+unprojectLngFromMeters : Float -> Float
+unprojectLngFromMeters x =
+    unprojectLngFromMapWidth x earthCircumferenceMeters
+
+
+unprojectLatFromMeters : Float -> Float
+unprojectLatFromMeters y =
+    unprojectLatFromMapWidth y earthCircumferenceMeters

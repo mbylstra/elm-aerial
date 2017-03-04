@@ -8,6 +8,8 @@ import SphericalMercator
         , latFromProjectedRadians
         , projectLatToMeters
         , projectLngToMeters
+        , unprojectLngFromMeters
+        , unprojectLatFromMeters
         )
 import Geo exposing (LatLng)
 
@@ -104,5 +106,13 @@ all =
                 \() ->
                     projectLatToMeters (alertCanadaLatLng.lat * -1)
                         |> Expect.all [ Expect.lessThan (-17 * million), Expect.greaterThan (-20 * million) ]
+            , test "from Alert Canada latitude and back" <|
+                \() ->
+                    let
+                        resultMeters =
+                            projectLatToMeters alertCanadaLatLng.lat
+                    in
+                        unprojectLatFromMeters resultMeters
+                            |> Expect.all [ Expect.lessThan (alertCanadaLatLng.lat + 0.001), Expect.greaterThan (alertCanadaLatLng.lat - 0.001) ]
             ]
         ]
