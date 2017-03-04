@@ -1,7 +1,13 @@
 module SlippyTiles exposing (..)
 
 import Geo exposing (LatLng)
-import SphericalMercator exposing (projectLatToMapWidth, projectLngToMapWidth)
+import SphericalMercator
+    exposing
+        ( projectLatToMapWidth
+        , projectLngToMapWidth
+        , unprojectLngFromMapWidth
+        , unprojectLatFromMapWidth
+        )
 
 
 tileSize : Int
@@ -48,14 +54,19 @@ slippyTileUrl subdomain { x, y, zoom } =
         "http://" ++ subdomain ++ ".tile.osm.org/" ++ zS ++ "/" ++ xS ++ "/" ++ yS ++ ".png"
 
 
+getMapWidth : Int -> Float
+getMapWidth zoom =
+    (2 ^ zoom)
+        * tileSize
+        |> toFloat
+
+
 latLngToWorldPixelPoint : Int -> LatLng -> WorldMapPixelPoint
 latLngToWorldPixelPoint zoom { lat, lng } =
     let
         -- the width of the entire map in pixels
         mapWidth =
-            (2 ^ zoom)
-                * tileSize
-                |> toFloat
+            getMapWidth zoom
 
         halfMapWidth =
             mapWidth / 2
@@ -82,3 +93,23 @@ latLngToSlippyTileNumber zoom latLng =
             |> latLngToWorldPixelPoint zoom
             |> worldPixelPointToSlippyTileNumber
         )
+
+
+worldPixelPointToLatLng : WorldMapPixelPoint -> LatLng
+worldPixelPointToLatLng { zoom, x, y } =
+    let
+        mapWidth =
+            getMapWidth zoom
+
+        halfMapWidth =
+            mapWidth / 2
+
+        lng =
+            unprojectLngFromMapWidth mapWidth ((toFloat x) - halfMapWidth)
+
+        lat =
+            -(unprojectLatFromMapWidth mapWidth ((toFloat y) - halfMapWidth))
+    in
+        { lat = lat
+        , lng = lng
+        }
