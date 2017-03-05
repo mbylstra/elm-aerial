@@ -54,8 +54,8 @@ viewportPointToWorldPixelPoint viewportPoint model =
         }
 
 
-viewportPointToLatLng : Point2DInt -> Model -> LatLng
-viewportPointToLatLng viewportPoint model =
+viewportPointToLatLng : Model -> Point2DInt -> LatLng
+viewportPointToLatLng model viewportPoint =
     -- (Debug.log "clicked worldPixelPoint" <|
     viewportPointToWorldPixelPoint viewportPoint model
         -- )
@@ -66,6 +66,13 @@ viewportPointToLatLng viewportPoint model =
 getMapCenterAsWorldPixelPoint : Model -> WorldMapPixelPoint
 getMapCenterAsWorldPixelPoint model =
     latLngToWorldPixelPoint model.zoom model.latLng
+
+
+getViewportCenter : Model -> Point2DInt
+getViewportCenter model =
+    { x = model.mapWidthPx // 2
+    , y = model.mapHeightPx // 2
+    }
 
 
 getWorldWidthInTiles : Model -> Int

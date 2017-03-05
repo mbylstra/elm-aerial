@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import Model exposing (viewportPointToLatLng)
+import Model exposing (getMapCenterAsWorldPixelPoint, getViewportCenter, viewportPointToLatLng)
 import Types exposing (..)
 import VectorMath exposing (difference)
 
@@ -72,13 +72,24 @@ update msg model =
                                         mouseMovedVector =
                                             Debug.log "mouseMovedVector" (difference mouseDownState.startPosition mouseOverState.position)
 
+                                        viewportCenter =
+                                            getViewportCenter model
+
+                                        newCenterLatLng =
+                                            VectorMath.minusVector viewportCenter mouseMovedVector
+                                                |> viewportPointToLatLng model
+
+                                        -- currentViewpoint
                                         -- so just thinking about lng/x, we need to move the center lat *backwards* (minus) from mouseMovedVector.x
                                         -- so we get x at (mapCenter.x - mouseMovedVector.x)
                                         -- and get the latlng for that x
                                         -- Let's implement getting latlng when clicking on the map
                                         -- mapCenter in pixels should be model function
                                     in
-                                        { model | maybeMouseOver = Just <| { mouseOverState | down = Nothing } }
+                                        { model
+                                            | maybeMouseOver = Just <| { mouseOverState | down = Nothing }
+                                            , latLng = newCenterLatLng
+                                        }
 
                                 -- This is where we need to recalculate the center lat lng
                                 Nothing ->
@@ -108,7 +119,7 @@ update msg model =
         MouseClick position ->
             let
                 _ =
-                    Debug.log "latlng" (viewportPointToLatLng position model)
+                    Debug.log "latlng" (viewportPointToLatLng model position)
 
                 -- _ =
                 --     Debug.log "position" position

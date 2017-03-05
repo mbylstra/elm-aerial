@@ -49,5 +49,5 @@ all =
                     in
                         point.y
                             |> Expect.atLeast 0
-            
+            ]
         ]
