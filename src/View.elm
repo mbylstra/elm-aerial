@@ -3,9 +3,11 @@ module View exposing (..)
 import Html exposing (Html, div, img, input, text)
 import Html.Attributes exposing (draggable, src, style, type_, value)
 import Html.Events exposing (on, onInput, onMouseDown, onMouseLeave, onMouseUp)
+import Html.Keyed
 import Maybe.Extra exposing (join)
 import Model exposing (getDraggingOffset, getTileViewModels)
 import MouseEvents exposing (onMouseEnter, relPos)
+import MouseWheel
 import SlippyTiles exposing (SlippyTileNumber, getTileTopLeftWorldPixelPoint, latLngToSlippyTileNumber, latLngToWorldPixelPoint, slippyTileUrl, tileSize, worldPixelPointToSlippyTileNumber)
 import Types exposing (..)
 import VectorMath exposing (Point2DInt, Vector2DInt)
@@ -51,13 +53,14 @@ mapViewportView model =
         -- if dragging, then get the drag offset and apply that to all images
         -- using translate2D, and use withDefault to set the offset to { x = 0, y = 0}
     in
-        div
+        Html.Keyed.node "div"
             [ MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
             , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
             , onMouseUp MouseUp
             , onMouseLeave MouseLeave
             , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
             , MouseEvents.onClick (MouseEvents.relPos >> MouseClick)
+            , MouseWheel.onMouseWheel (MouseWheel)
               -- , on "mousemove" (DOM.target DOM.offsetWidth |> Json.map MouseMoved)
             , style
                 [ ( "position", "relative" )
@@ -81,7 +84,7 @@ mapViewportView model =
 --     |> .tileViewModels
 
 
-tileView : { model : Model, offset : Point2DInt } -> TileViewModel -> Html msg
+tileView : { model : Model, offset : Point2DInt } -> TileViewModel -> ( String, Html msg )
 tileView { model, offset } tileViewModel =
     let
         threeD =
@@ -103,7 +106,18 @@ tileView { model, offset } tileViewModel =
         url =
             slippyTileUrl "a" tileViewModel.tileNumber
     in
-        img [ draggable "false", src url, style style_ ] []
+        ( tileViewModel.tileNumber |> tileNumberToHtmlKey
+        , img [ draggable "false", src url, style style_ ] []
+        )
+
+
+tileNumberToHtmlKey : SlippyTileNumber -> String
+tileNumberToHtmlKey tile =
+    [ tile.x |> toString
+    , tile.y |> toString
+    , tile.zoom |> toString
+    ]
+        |> String.join "-"
 
 
 

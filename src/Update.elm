@@ -125,3 +125,18 @@ update msg model =
                 --     Debug.log "position" position
             in
                 model ! []
+
+        MouseWheel wheelEvent ->
+            let
+                _ =
+                    Debug.log "wheelEvent" wheelEvent
+
+                newModel =
+                    if wheelEvent.deltaY < 0.0 then
+                        { model | zoom = model.zoom + 1 }
+                    else if wheelEvent.deltaY > 0.0 then
+                        { model | zoom = model.zoom - 1 }
+                    else
+                        model
+            in
+                newModel ! []

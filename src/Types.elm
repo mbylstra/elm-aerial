@@ -4,6 +4,7 @@ import Geo exposing (LatLng)
 import Mouse
 import SlippyTiles exposing (SlippyTileNumber)
 import VectorMath exposing (Point2DInt, Vector2DInt)
+import MouseWheel exposing (MouseWheelEvent)
 
 
 type alias Model =
@@ -29,6 +30,7 @@ type Msg
     | MouseEnter Mouse.Position
     | MouseLeave
     | MouseClick Mouse.Position
+    | MouseWheel MouseWheelEvent
 
 
 type alias TileViewModel =
