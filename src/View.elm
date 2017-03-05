@@ -1,15 +1,14 @@
 module View exposing (..)
 
 import Html exposing (Html, div, img, input, text)
-import Html.Attributes exposing (src, type_, value, style, draggable)
-import Html.Events exposing (onInput, onMouseDown, onMouseUp, onMouseLeave, on)
+import Html.Attributes exposing (draggable, src, style, type_, value)
+import Html.Events exposing (on, onInput, onMouseDown, onMouseLeave, onMouseUp)
 import Maybe.Extra exposing (join)
-import Model exposing (getDraggingOffset)
+import Model exposing (getDraggingOffset, getTileViewModels)
+import MouseEvents exposing (onMouseEnter, relPos)
 import SlippyTiles exposing (SlippyTileNumber, getTileTopLeftWorldPixelPoint, latLngToSlippyTileNumber, latLngToWorldPixelPoint, slippyTileUrl, tileSize, worldPixelPointToSlippyTileNumber)
 import Types exposing (..)
-import Util exposing (cartesianProduct)
 import VectorMath exposing (Point2DInt, Vector2DInt)
-import MouseEvents exposing (relPos, onMouseEnter)
 
 
 view : Model -> Html Msg
@@ -21,7 +20,8 @@ view model =
 
         url : String
         url =
-            Debug.log "url" (slippyTileUrl "a" (Debug.log "tileCoords" tileNumber))
+            -- Debug.log "url" <|
+            slippyTileUrl "a" tileNumber
     in
         Html.div []
             [ mapViewportView model
@@ -32,89 +32,42 @@ view model =
             ]
 
 
-type alias TileViewModel =
-    { tileNumber : SlippyTileNumber, viewportPoint : Point2DInt }
-
-
-getTileViewModels : Model -> List TileViewModel
-getTileViewModels model =
+mapViewportView : Model -> Html Msg
+mapViewportView model =
     let
-        mapCenter =
-            Debug.log "mapCenter" <|
-                latLngToWorldPixelPoint model.zoom model.latLng
+        tileViewModels =
+            getTileViewModels model
 
-        worldWidthInTiles =
-            2 ^ model.zoom
+        tileOffset : Vector2DInt
+        tileOffset =
+            model.maybeMouseOver
+                |> Maybe.map getDraggingOffset
+                |> Maybe.Extra.join
+                |> Maybe.withDefault { x = 0, y = 0 }
 
-        viewportTopLeftWorldPixel =
-            Debug.log "viewportTopLeftWorldPixel" <|
-                { x = mapCenter.x - (model.mapWidthPx // 2)
-                , y = mapCenter.y - (model.mapHeightPx // 2)
-                , zoom = model.zoom
-                }
-
-        viewportBottomRightWorldPixel =
-            Debug.log "viewportBottomRightWorldPixel" <|
-                { x = mapCenter.x + (model.mapWidthPx // 2)
-                , y = mapCenter.y + (model.mapHeightPx // 2)
-                , zoom = model.zoom
-                }
-
-        topLeftTileNumber =
-            Debug.log "topLeftTileNuber" <|
-                worldPixelPointToSlippyTileNumber viewportTopLeftWorldPixel
-
-        topLeftTileWorldPixelPoint =
-            Debug.log "topLeftTileWOrldPixelPoint" <|
-                getTileTopLeftWorldPixelPoint topLeftTileNumber
-
-        topLeftTileViewportPoint =
-            Debug.log "topLeftTileViewportPoint" <|
-                { x = topLeftTileWorldPixelPoint.x - viewportTopLeftWorldPixel.x
-                , y = topLeftTileWorldPixelPoint.y - viewportTopLeftWorldPixel.y
-                }
-
-        numColumns =
-            Debug.log "numColumns" <|
-                (viewportBottomRightWorldPixel.x - topLeftTileWorldPixelPoint.x)
-                    // tileSize
-                    + 1
-
-        numRows =
-            Debug.log "numRows" <|
-                (viewportBottomRightWorldPixel.y - topLeftTileWorldPixelPoint.y)
-                    // tileSize
-                    + 1
-
-        matrix : List ( Int, Int )
-        matrix =
-            Debug.log "matrix" <|
-                cartesianProduct (List.range 0 (numColumns - 1)) (List.range 0 (numRows - 1))
-
-        toTileViewModel ( viewportTileX, viewportTileY ) =
-            let
-                -- we really want to use translation functions here? Maybe use opensolid/geometry?
-                currTileTopLeftViewportPoint =
-                    { x = topLeftTileViewportPoint.x + (viewportTileX * tileSize)
-                    , y = topLeftTileViewportPoint.y + (viewportTileY * tileSize)
-                    }
-
-                currTileBottomRightViewportPoint =
-                    { x = currTileTopLeftViewportPoint.x + tileSize
-                    , y = currTileTopLeftViewportPoint.y + tileSize
-                    }
-            in
-                { tileNumber =
-                    { x = (topLeftTileNumber.x + viewportTileX) % worldWidthInTiles
-                    , y = (topLeftTileNumber.y + viewportTileY) % worldWidthInTiles
-                    , zoom = topLeftTileNumber.zoom
-                    }
-                , viewportPoint = currTileTopLeftViewportPoint
-                }
-
-        -- we shouldn't keep zoom around for each tile (no need!) - it just needs to be set right at the top
+        -- this is a legitimate withDefault. We don't want to offset the tiles
+        -- if the map is not being dragged
+        -- so what we want to do is
+        -- if dragging, then get the drag offset and apply that to all images
+        -- using translate2D, and use withDefault to set the offset to { x = 0, y = 0}
     in
-        List.map toTileViewModel matrix
+        div
+            [ MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
+            , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
+            , onMouseUp MouseUp
+            , onMouseLeave MouseLeave
+            , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
+            , MouseEvents.onClick (MouseEvents.relPos >> MouseClick)
+              -- , on "mousemove" (DOM.target DOM.offsetWidth |> Json.map MouseMoved)
+            , style
+                [ ( "position", "relative" )
+                , ( "overflow", "hidden" )
+                , ( "width", (toString model.mapWidthPx) ++ "px" )
+                , ( "height", (toString model.mapHeightPx) ++ "px" )
+                ]
+            ]
+            -- Html Float myButton = button [ on "click" (target offsetWidth) ] [ text "Click me!" ]
+            (List.map (tileView { model = model, offset = tileOffset }) tileViewModels)
 
 
 
@@ -151,43 +104,6 @@ tileView { model, offset } tileViewModel =
             slippyTileUrl "a" tileViewModel.tileNumber
     in
         img [ draggable "false", src url, style style_ ] []
-
-
-mapViewportView : Model -> Html Msg
-mapViewportView model =
-    let
-        tileViewModels =
-            getTileViewModels model
-
-        tileOffset : Vector2DInt
-        tileOffset =
-            model.maybeMouseOver
-                |> Maybe.map getDraggingOffset
-                |> Maybe.Extra.join
-                |> Maybe.withDefault { x = 0, y = 0 }
-
-        -- this is a legitimate withDefault. We don't want to offset the tiles
-        -- if the map is not being dragged
-        -- so what we want to do is
-        -- if dragging, then get the drag offset and apply that to all images
-        -- using translate2D, and use withDefault to set the offset to { x = 0, y = 0}
-    in
-        div
-            [ MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
-            , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
-            , onMouseUp MouseUp
-            , onMouseLeave MouseLeave
-            , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
-              -- , on "mousemove" (DOM.target DOM.offsetWidth |> Json.map MouseMoved)
-            , style
-                [ ( "position", "relative" )
-                , ( "overflow", "hidden" )
-                , ( "width", (toString model.mapWidthPx) ++ "px" )
-                , ( "height", (toString model.mapHeightPx) ++ "px" )
-                ]
-            ]
-            -- Html Float myButton = button [ on "click" (target offsetWidth) ] [ text "Click me!" ]
-            (List.map (tileView { model = model, offset = tileOffset }) tileViewModels)
 
 
 

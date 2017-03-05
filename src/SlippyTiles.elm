@@ -88,27 +88,42 @@ latLngToWorldPixelPoint zoom { lat, lng } =
 
 latLngToSlippyTileNumber : Int -> LatLng -> SlippyTileNumber
 latLngToSlippyTileNumber zoom latLng =
-    Debug.log "slippyTileNumber"
-        (latLng
-            |> latLngToWorldPixelPoint zoom
-            |> worldPixelPointToSlippyTileNumber
-        )
+    -- Debug.log "slippyTileNumber" <|
+    (latLng
+        |> latLngToWorldPixelPoint zoom
+        |> worldPixelPointToSlippyTileNumber
+    )
+
+
+
+-- This is broken
 
 
 worldPixelPointToLatLng : WorldMapPixelPoint -> LatLng
 worldPixelPointToLatLng { zoom, x, y } =
     let
         mapWidth =
+            -- Debug.log "mapWidth" <|
             getMapWidth zoom
 
         halfMapWidth =
             mapWidth / 2
 
+        mercatorX =
+            -- Debug.log "mercatorX" <|
+            (toFloat x)
+                - halfMapWidth
+
+        mercatorY =
+            -- Debug.log "mercatorY" <|
+            (mapWidth - (toFloat y))
+                - halfMapWidth
+
         lng =
-            unprojectLngFromMapWidth mapWidth ((toFloat x) - halfMapWidth)
+            unprojectLngFromMapWidth mapWidth mercatorX
 
         lat =
-            -(unprojectLatFromMapWidth mapWidth ((toFloat y) - halfMapWidth))
+            unprojectLatFromMapWidth mapWidth mercatorY
     in
         { lat = lat
         , lng = lng

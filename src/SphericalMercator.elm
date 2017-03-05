@@ -72,12 +72,17 @@ projectLatToMapWidth lat width =
 
 
 unprojectLngFromMapWidth : Float -> Float -> Float
-unprojectLngFromMapWidth x width =
-    lngFromProjectedRadians ((x / (width / 2)) * pi)
+unprojectLngFromMapWidth width x =
+    let
+        xRadians =
+            -- Debug.log "xRadians" <|
+            ((x / (width / 2)) * pi)
+    in
+        lngFromProjectedRadians xRadians
 
 
 unprojectLatFromMapWidth : Float -> Float -> Float
-unprojectLatFromMapWidth y width =
+unprojectLatFromMapWidth width y =
     latFromProjectedRadians ((y / (width / 2)) * pi)
 
 

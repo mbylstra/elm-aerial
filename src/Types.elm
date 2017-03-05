@@ -1,7 +1,8 @@
 module Types exposing (..)
 
-import Mouse
 import Geo exposing (LatLng)
+import Mouse
+import SlippyTiles exposing (SlippyTileNumber)
 import VectorMath exposing (Point2DInt, Vector2DInt)
 
 
@@ -27,3 +28,8 @@ type Msg
     | MouseMove Mouse.Position
     | MouseEnter Mouse.Position
     | MouseLeave
+    | MouseClick Mouse.Position
+
+
+type alias TileViewModel =
+    { tileNumber : SlippyTileNumber, viewportPoint : Point2DInt }

@@ -1,5 +1,6 @@
 module Update exposing (..)
 
+import Model exposing (viewportPointToLatLng)
 import Types exposing (..)
 import VectorMath exposing (difference)
 
@@ -103,3 +104,13 @@ update msg model =
 
         MouseLeave ->
             { model | maybeMouseOver = Nothing } ! []
+
+        MouseClick position ->
+            let
+                _ =
+                    Debug.log "latlng" (viewportPointToLatLng position model)
+
+                -- _ =
+                --     Debug.log "position" position
+            in
+                model ! []
