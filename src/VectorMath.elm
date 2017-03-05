@@ -1,5 +1,7 @@
 module VectorMath exposing (..)
 
+import Mouse
+
 
 type alias Vector2DInt =
     { x : Int
@@ -10,6 +12,13 @@ type alias Vector2DInt =
 type alias Point2DInt =
     { x : Int
     , y : Int
+    }
+
+
+fromMousePosition : Mouse.Position -> Point2DInt
+fromMousePosition mousePosition =
+    { x = mousePosition.x
+    , y = mousePosition.y
     }
 
 
@@ -29,3 +38,17 @@ why not
 negate : Point2DInt -> Point2DInt
 negate p =
     { x = -p.x, y = -p.y }
+
+
+addVector : Point2DInt -> Vector2DInt -> Point2DInt
+addVector point vector =
+    { x = point.x + vector.x
+    , y = point.y + vector.y
+    }
+
+
+minusVector : Point2DInt -> Vector2DInt -> Point2DInt
+minusVector point vector =
+    { x = point.x - vector.x
+    , y = point.y - vector.y
+    }
