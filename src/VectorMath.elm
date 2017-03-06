@@ -52,3 +52,10 @@ minusVector point vector =
     { x = point.x - vector.x
     , y = point.y - vector.y
     }
+
+
+scalarMultiply : Vector2DInt -> Int -> Vector2DInt
+scalarMultiply v amount =
+    { x = v.x * amount
+    , y = v.y * amount
+    }

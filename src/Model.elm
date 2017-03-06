@@ -4,7 +4,7 @@ import Geo exposing (LatLng)
 import SlippyTiles exposing (WorldMapPixelPoint, getTileTopLeftWorldPixelPoint, latLngToWorldPixelPoint, tileSize, worldPixelPointToLatLng, worldPixelPointToSlippyTileNumber)
 import Types exposing (..)
 import Util exposing (cartesianProduct)
-import VectorMath exposing (Point2DInt, Vector2DInt, difference)
+import VectorMath exposing (Point2DInt, Vector2DInt, difference, scalarMultiply)
 
 
 initLatLng : LatLng
@@ -22,6 +22,9 @@ model =
     { latLng = initLatLng
     , zoom =
         initZoom
+        -- , mapWidthPx = 100
+        -- , mapHeightPx =
+        --     100
     , mapWidthPx = 1000
     , mapHeightPx =
         700
@@ -174,7 +177,73 @@ getTileViewModels model =
                     }
                 , viewportPoint = currTileTopLeftViewportPoint
                 }
-
-        -- we shouldn't keep zoom around for each tile (no need!) - it just needs to be set right at the top
     in
         List.map toTileViewModel matrix
+
+
+getViewportCenterOffset : Model -> Point2DInt -> Vector2DInt
+getViewportCenterOffset model viewportPoint =
+    VectorMath.difference (getViewportCenter model) viewportPoint
+
+
+zoomAtCursor : Model -> Bool -> Model
+zoomAtCursor model zoomIn =
+    case model.maybeMouseOver of
+        Just mouseOverState ->
+            let
+                _ =
+                    Debug.log "model" model
+
+                viewportCenterOffset =
+                    Debug.log "viewportcenteroffset" <|
+                        getViewportCenterOffset model mouseOverState.position
+
+                zoomDelta =
+                    Debug.log "zoomDelta" <|
+                        if zoomIn then
+                            1
+                        else
+                            -1
+
+                panVector =
+                    -- To be honest I don't know why the math is different for zooming in vs zooming out
+                    -- First I got zoom out working, then I hacked around at things until zoom in
+                    -- worked, and now they both work!
+                    Debug.log "panVector" <|
+                        if zoomIn then
+                            VectorMath.negate viewportCenterOffset
+                        else
+                            VectorMath.scalarMultiply viewportCenterOffset (2 ^ zoomDelta)
+
+                -- VectorMath.scalarMultiply viewportCenterOffset -1
+                -- (2 ^ zoomDelta)
+                model2 =
+                    Debug.log "model2" <|
+                        { model | zoom = model.zoom + zoomDelta }
+            in
+                Debug.log "model3" <|
+                    panByPixels model2 panVector
+
+        -- model2
+        Nothing ->
+            model
+
+
+panByPixels : Model -> Vector2DInt -> Model
+panByPixels model vector =
+    -- get latlng at mapCenter - vector
+    let
+        mapCenter =
+            getMapCenterAsWorldPixelPoint model
+
+        newMapCenter =
+            VectorMath.minusVector { x = mapCenter.x, y = mapCenter.y } vector
+
+        newLatLng =
+            worldPixelPointToLatLng { x = newMapCenter.x, y = newMapCenter.y, zoom = model.zoom }
+    in
+        { model | latLng = newLatLng }
+
+
+
+--

@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import Model exposing (getMapCenterAsWorldPixelPoint, getViewportCenter, viewportPointToLatLng)
+import Model exposing (getMapCenterAsWorldPixelPoint, getViewportCenter, viewportPointToLatLng, zoomAtCursor)
 import Types exposing (..)
 import VectorMath exposing (difference)
 
@@ -128,15 +128,17 @@ update msg model =
 
         MouseWheel wheelEvent ->
             let
-                _ =
-                    Debug.log "wheelEvent" wheelEvent
-
                 newModel =
-                    if wheelEvent.deltaY < 0.0 then
-                        { model | zoom = model.zoom + 1 }
-                    else if wheelEvent.deltaY > 0.0 then
-                        { model | zoom = model.zoom - 1 }
-                    else
-                        model
+                    case model.maybeMouseOver of
+                        Just mouseOverState ->
+                            if wheelEvent.deltaY < 0.0 then
+                                zoomAtCursor model True
+                            else if wheelEvent.deltaY > 0.0 then
+                                zoomAtCursor model False
+                            else
+                                model
+
+                        Nothing ->
+                            model
             in
                 newModel ! []
