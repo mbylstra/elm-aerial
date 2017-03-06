@@ -5,10 +5,11 @@ import Html.Attributes exposing (draggable, src, style, type_, value)
 import Html.Events exposing (on, onInput, onMouseDown, onMouseLeave, onMouseUp)
 import Html.Keyed
 import Maybe.Extra exposing (join)
-import Model exposing (getDraggingOffset, getTileViewModels)
+import Model exposing (getDraggingOffset)
+import ViewModel exposing (getTileViewModels, TileViewModel)
 import MouseEvents exposing (onMouseEnter, relPos)
 import MouseWheel
-import SlippyTiles exposing (SlippyTileNumber, getTileTopLeftWorldPixelPoint, latLngToSlippyTileNumber, latLngToWorldPixelPoint, slippyTileUrl, tileSize, worldPixelPointToSlippyTileNumber)
+import SlippyTiles exposing (SlippyTileNumber, getTileTopLeftWorldPixelPoint, latLngToSlippyTileNumber, latLngToWorldPixelPoint, slippyTileUrl, worldPixelPointToSlippyTileNumber)
 import Types exposing (..)
 import VectorMath exposing (Point2DInt, Vector2DInt)
 
@@ -38,7 +39,7 @@ mapViewportView : Model -> Html Msg
 mapViewportView model =
     let
         tileViewModels =
-            getTileViewModels model
+            getTileViewModels model model.resolution
 
         tileOffset : Vector2DInt
         tileOffset =
@@ -67,6 +68,7 @@ mapViewportView model =
                 , ( "overflow", "hidden" )
                 , ( "width", (toString model.mapWidthPx) ++ "px" )
                 , ( "height", (toString model.mapHeightPx) ++ "px" )
+                , ( "background-color", "rgb(255, 220, 220)" )
                 ]
             ]
             -- Html Float myButton = button [ on "click" (target offsetWidth) ] [ text "Click me!" ]
@@ -98,6 +100,8 @@ tileView { model, offset } tileViewModel =
             , ( "top", (toString tileViewModel.viewportPoint.y) ++ "px" )
             , ( "pointerEvents", "None" )
             , ( "transform", transform )
+            , ( "width", (toString tileViewModel.tileSize) ++ "px" )
+            , ( "height", (toString tileViewModel.tileSize) ++ "px" )
             ]
 
         transform =

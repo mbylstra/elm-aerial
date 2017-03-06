@@ -59,3 +59,15 @@ scalarMultiply v amount =
     { x = v.x * amount
     , y = v.y * amount
     }
+
+
+timesFloatToInt : Int -> Float -> Int
+timesFloatToInt aInt bFloat =
+    (toFloat aInt) * bFloat |> floor
+
+
+scalarMultiplyByFloat : Vector2DInt -> Float -> Vector2DInt
+scalarMultiplyByFloat v amount =
+    { x = timesFloatToInt v.x amount
+    , y = timesFloatToInt v.y amount
+    }

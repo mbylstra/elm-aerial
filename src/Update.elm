@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import Model exposing (getMapCenterAsWorldPixelPoint, getViewportCenter, viewportPointToLatLng, zoomAtCursor)
+import Model exposing (getViewportCenter, viewportPointToLatLng, zoomAtCursor)
 import Types exposing (..)
 import VectorMath exposing (difference)
 

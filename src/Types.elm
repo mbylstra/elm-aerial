@@ -12,6 +12,9 @@ type alias Model =
     , zoom : Int
     , mapWidthPx : Int
     , mapHeightPx : Int
+    , resolution :
+        Float
+        -- 0.5 = half, 1.0 = normal, 2.0 = retina
     , maybeMouseOver : Maybe MouseOverState
     }
 
@@ -31,7 +34,3 @@ type Msg
     | MouseLeave
     | MouseClick Mouse.Position
     | MouseWheel MouseWheelEvent
-
-
-type alias TileViewModel =
-    { tileNumber : SlippyTileNumber, viewportPoint : Point2DInt }

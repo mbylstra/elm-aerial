@@ -13,5 +13,5 @@ main =
         { view = View.view
         , update = Update.update
         , subscriptions = \_ -> Sub.none
-        , init = ( Model.model, Cmd.none )
+        , init = ( Model.init, Cmd.none )
         }

@@ -1,10 +1,10 @@
 module Model exposing (..)
 
 import Geo exposing (LatLng)
-import SlippyTiles exposing (WorldMapPixelPoint, getTileTopLeftWorldPixelPoint, latLngToWorldPixelPoint, tileSize, worldPixelPointToLatLng, worldPixelPointToSlippyTileNumber)
+import SlippyTiles exposing (WorldMapPixelPoint, getTileTopLeftWorldPixelPoint, latLngToWorldPixelPoint, worldPixelPointToLatLng, worldPixelPointToSlippyTileNumber)
+import Tiles
 import Types exposing (..)
-import Util exposing (cartesianProduct)
-import VectorMath exposing (Point2DInt, Vector2DInt, difference, scalarMultiply)
+import VectorMath exposing (Point2DInt, Vector2DInt, difference, scalarMultiply, timesFloatToInt)
 
 
 initLatLng : LatLng
@@ -12,24 +12,30 @@ initLatLng =
     { lat = -37.813611, lng = 144.963056 }
 
 
+
+-- { lat = 0.0, lng = 0.0 }
+
+
 initZoom : Int
 initZoom =
-    4
+    2
 
 
-model : Model
-model =
+init : Model
+init =
     { latLng = initLatLng
     , zoom =
         initZoom
-        -- , mapWidthPx = 100
-        -- , mapHeightPx =
-        --     100
-    , mapWidthPx = 1000
+    , mapWidthPx = 512
     , mapHeightPx =
-        700
+        512
+        -- , mapWidthPx = 1000
+        -- , mapHeightPx =
+        --     1000
         -- , mapWidthPx = 256
         -- , mapHeightPx = 256
+        -- , resolution = 0.25
+    , resolution = 0.25
     , maybeMouseOver = Nothing
     }
 
@@ -49,7 +55,7 @@ viewportPointToWorldPixelPoint viewportPoint model =
     let
         viewportTopLeftWorldPixel =
             -- Debug.log "viewportTopLeftWorldPixel" <|
-            getViewportTopLeftWorldPixel model
+            getViewportTopLeftWorldPixel model model.zoom 1.0
     in
         { x = viewportTopLeftWorldPixel.x + viewportPoint.x
         , y = viewportTopLeftWorldPixel.y + viewportPoint.y
@@ -66,9 +72,10 @@ viewportPointToLatLng model viewportPoint =
             worldPixelPointToLatLng
 
 
-getMapCenterAsWorldPixelPoint : Model -> WorldMapPixelPoint
-getMapCenterAsWorldPixelPoint model =
-    latLngToWorldPixelPoint model.zoom model.latLng
+
+-- latLngToWorldPixelPoint : Int -> LatLng -> WorldMapPixelPoint
+-- latLngToWorldPixelPoint zoom latLng =
+--     latLngToWorldPixelPoint zoom latLng
 
 
 getViewportCenter : Model -> Point2DInt
@@ -78,107 +85,81 @@ getViewportCenter model =
     }
 
 
+{-| This is the width in the tiles at 1:1 resolution.
+-}
 getWorldWidthInTiles : Model -> Int
 getWorldWidthInTiles model =
-    2 ^ model.zoom
+    Tiles.getWorldWidthInTiles model.zoom
 
 
-getViewportTopLeftWorldPixel : Model -> WorldMapPixelPoint
-getViewportTopLeftWorldPixel model =
+{-| this is the same if the resolution is zero
+-}
+mapWidthInWorldPixels : Int -> Float -> Int
+mapWidthInWorldPixels mapWidthPx resolution =
+    Debug.log "mapWidthInWorldPixels" <|
+        timesFloatToInt mapWidthPx resolution
+
+
+mapHeightInWorldPixels : Int -> Float -> Int
+mapHeightInWorldPixels mapHeightPx resolution =
+    Debug.log "mapHeightInWorldPixels" <|
+        timesFloatToInt mapHeightPx resolution
+
+
+getViewportTopLeftWorldPixel : Model -> Int -> Float -> WorldMapPixelPoint
+getViewportTopLeftWorldPixel model zoom resolution =
+    -- I mean, this totally depends on the resolution :(
+    -- I think there's an issue here.
+    -- Cos we are confusing the WorldPixel where we use atual pixel width
+    -- vs the pretendWorldPixel ???
+    -- I think the trick is to measure the "mapWidth" in terms of worldPixels, not screen pixels
+    let
+        -- this is correct
+        mapCenter =
+            Debug.log "mapCenterWorldPixel" <|
+                latLngToWorldPixelPoint zoom model.latLng
+    in
+        -- but this doesn't take into account resolution
+        -- { x = (timesFloatToInt mapCenter.x resolution) - ((timesFloatToInt model.mapWidthPx resolution) // 2)
+        -- , y = (timesFloatToInt mapCenter.y resolution) - ((timesFloatToInt model.mapHeightPx resolution) // 2)
+        { x = mapCenter.x - ((mapWidthInWorldPixels model.mapWidthPx resolution) // 2)
+        , y =
+            mapCenter.y - ((mapHeightInWorldPixels model.mapHeightPx resolution) // 2)
+            -- { x = mapCenter.x - (model.mapWidthPx // 2)
+            -- , y = mapCenter.y - (model.mapHeightPx // 2)
+        , zoom = zoom
+        }
+
+
+getViewportBottomRightWorldPixel : Model -> Int -> Float -> WorldMapPixelPoint
+getViewportBottomRightWorldPixel model zoom resolution =
     let
         mapCenter =
-            -- Debug.log "mapCenterWorldPixel" <|
-            getMapCenterAsWorldPixelPoint model
+            latLngToWorldPixelPoint zoom model.latLng
     in
-        { x = mapCenter.x - (model.mapWidthPx // 2)
-        , y = mapCenter.y - (model.mapHeightPx // 2)
-        , zoom = model.zoom
+        { x = mapCenter.x + ((mapWidthInWorldPixels model.mapWidthPx resolution) // 2)
+        , y = mapCenter.y + ((mapHeightInWorldPixels model.mapHeightPx resolution) // 2)
+        , zoom = zoom
         }
 
 
-getViewportBottomRightWorldPixel : Model -> WorldMapPixelPoint
-getViewportBottomRightWorldPixel model =
+worldPixelPointToViewportPoint : WorldMapPixelPoint -> Model -> Int -> Float -> Point2DInt
+worldPixelPointToViewportPoint worldPixelPoint model zoom resolution =
     let
-        mapCenter =
-            getMapCenterAsWorldPixelPoint model
-    in
-        { x = mapCenter.x + (model.mapWidthPx // 2)
-        , y = mapCenter.y + (model.mapHeightPx // 2)
-        , zoom = model.zoom
-        }
-
-
-worldPixelPointToViewportPoint : WorldMapPixelPoint -> Model -> Point2DInt
-worldPixelPointToViewportPoint worldPixelPoint model =
-    let
-        viewportTopLeftWorldPixel =
-            getViewportTopLeftWorldPixel model
-    in
-        { x = worldPixelPoint.x - viewportTopLeftWorldPixel.x
-        , y = worldPixelPoint.y - viewportTopLeftWorldPixel.y
-        }
-
-
-getTileViewModels : Model -> List TileViewModel
-getTileViewModels model =
-    let
-        worldWidthInTiles =
-            getWorldWidthInTiles model
+        _ =
+            Debug.log "worldPixelPoint B" worldPixelPoint
 
         viewportTopLeftWorldPixel =
-            getViewportTopLeftWorldPixel model
+            Debug.log "viewportTopLeftWorldPixel B" <|
+                getViewportTopLeftWorldPixel model zoom resolution
 
-        viewportBottomRightWorldPixel =
-            getViewportBottomRightWorldPixel model
-
-        topLeftTileNumber =
-            worldPixelPointToSlippyTileNumber viewportTopLeftWorldPixel
-
-        topLeftTileWorldPixelPoint =
-            getTileTopLeftWorldPixelPoint topLeftTileNumber
-
-        topLeftTileViewportPoint =
-            worldPixelPointToViewportPoint topLeftTileWorldPixelPoint model
-
-        numColumns =
-            -- Debug.log "numColumns" <|
-            (viewportBottomRightWorldPixel.x - topLeftTileWorldPixelPoint.x)
-                // tileSize
-                + 1
-
-        numRows =
-            -- Debug.log "numRows" <|
-            (viewportBottomRightWorldPixel.y - topLeftTileWorldPixelPoint.y)
-                // tileSize
-                + 1
-
-        matrix : List ( Int, Int )
-        matrix =
-            -- Debug.log "matrix" <|
-            cartesianProduct (List.range 0 (numColumns - 1)) (List.range 0 (numRows - 1))
-
-        toTileViewModel ( viewportTileX, viewportTileY ) =
-            let
-                -- we really want to use translation functions here? Maybe use opensolid/geometry?
-                currTileTopLeftViewportPoint =
-                    { x = topLeftTileViewportPoint.x + (viewportTileX * tileSize)
-                    , y = topLeftTileViewportPoint.y + (viewportTileY * tileSize)
-                    }
-
-                currTileBottomRightViewportPoint =
-                    { x = currTileTopLeftViewportPoint.x + tileSize
-                    , y = currTileTopLeftViewportPoint.y + tileSize
-                    }
-            in
-                { tileNumber =
-                    { x = (topLeftTileNumber.x + viewportTileX) % worldWidthInTiles
-                    , y = (topLeftTileNumber.y + viewportTileY) % worldWidthInTiles
-                    , zoom = topLeftTileNumber.zoom
-                    }
-                , viewportPoint = currTileTopLeftViewportPoint
-                }
+        vector =
+            { x = worldPixelPoint.x - viewportTopLeftWorldPixel.x
+            , y = worldPixelPoint.y - viewportTopLeftWorldPixel.y
+            }
     in
-        List.map toTileViewModel matrix
+        -- These need to get scaled up by resolution ro something?
+        VectorMath.scalarMultiplyByFloat vector (1.0 / resolution)
 
 
 getViewportCenterOffset : Model -> Point2DInt -> Vector2DInt
@@ -234,7 +215,7 @@ panByPixels model vector =
     -- get latlng at mapCenter - vector
     let
         mapCenter =
-            getMapCenterAsWorldPixelPoint model
+            latLngToWorldPixelPoint model.zoom model.latLng
 
         newMapCenter =
             VectorMath.minusVector { x = mapCenter.x, y = mapCenter.y } vector
