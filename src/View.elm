@@ -41,6 +41,12 @@ mapViewportView model =
         tileViewModels =
             getTileViewModels model model.resolution
 
+        lowResTileViewModels =
+            getTileViewModels model (model.resolution / 2.0)
+
+        lowResTileViewModels2 =
+            getTileViewModels model (model.resolution / 4.0)
+
         tileOffset : Vector2DInt
         tileOffset =
             model.maybeMouseOver
@@ -68,11 +74,14 @@ mapViewportView model =
                 , ( "overflow", "hidden" )
                 , ( "width", (toString model.mapWidthPx) ++ "px" )
                 , ( "height", (toString model.mapHeightPx) ++ "px" )
-                , ( "background-color", "rgb(255, 220, 220)" )
+                , ( "background", "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJUlEQVQoU2N88eLFfwY0ICEhwYguxjgUFKI7GsTH5m4M3w1ChQCnziae7MntdQAAAABJRU5ErkJggg==) repeat" )
                 ]
             ]
             -- Html Float myButton = button [ on "click" (target offsetWidth) ] [ text "Click me!" ]
-            (List.map (tileView { model = model, offset = tileOffset }) tileViewModels)
+            ((List.map (tileView { model = model, offset = tileOffset, z = 10 }) tileViewModels)
+                ++ (List.map (tileView { model = model, offset = tileOffset, z = 2 }) lowResTileViewModels)
+                ++ (List.map (tileView { model = model, offset = tileOffset, z = 1 }) lowResTileViewModels2)
+            )
 
 
 
@@ -86,8 +95,8 @@ mapViewportView model =
 --     |> .tileViewModels
 
 
-tileView : { model : Model, offset : Point2DInt } -> TileViewModel -> ( String, Html msg )
-tileView { model, offset } tileViewModel =
+tileView : { model : Model, offset : Point2DInt, z : Int } -> TileViewModel -> ( String, Html msg )
+tileView { model, offset, z } tileViewModel =
     let
         threeD =
             True
@@ -102,6 +111,7 @@ tileView { model, offset } tileViewModel =
             , ( "transform", transform )
             , ( "width", (toString tileViewModel.tileSize) ++ "px" )
             , ( "height", (toString tileViewModel.tileSize) ++ "px" )
+            , ( "zIndex", toString z )
             ]
 
         transform =

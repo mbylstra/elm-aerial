@@ -4,6 +4,7 @@ import Geo exposing (LatLng)
 import SlippyTiles exposing (WorldMapPixelPoint, getTileTopLeftWorldPixelPoint, latLngToWorldPixelPoint, worldPixelPointToLatLng, worldPixelPointToSlippyTileNumber)
 import Tiles
 import Types exposing (..)
+import Util exposing (fmod)
 import VectorMath exposing (Point2DInt, Vector2DInt, difference, scalarMultiply, timesFloatToInt)
 
 
@@ -26,16 +27,16 @@ init =
     { latLng = initLatLng
     , zoom =
         initZoom
-    , mapWidthPx = 512
-    , mapHeightPx =
-        512
-        -- , mapWidthPx = 1000
+        -- , mapWidthPx = 512
         -- , mapHeightPx =
-        --     1000
+        --     512
+    , mapWidthPx = 1000
+    , mapHeightPx =
+        800
         -- , mapWidthPx = 256
         -- , mapHeightPx = 256
         -- , resolution = 0.25
-    , resolution = 0.25
+    , resolution = 1.0
     , maybeMouseOver = Nothing
     }
 
@@ -175,10 +176,6 @@ zoomAtCursor model zoomIn =
                 _ =
                     Debug.log "model" model
 
-                viewportCenterOffset =
-                    Debug.log "viewportcenteroffset" <|
-                        getViewportCenterOffset model mouseOverState.position
-
                 zoomDelta =
                     Debug.log "zoomDelta" <|
                         if zoomIn then
@@ -186,24 +183,34 @@ zoomAtCursor model zoomIn =
                         else
                             -1
 
-                panVector =
-                    -- To be honest I don't know why the math is different for zooming in vs zooming out
-                    -- First I got zoom out working, then I hacked around at things until zoom in
-                    -- worked, and now they both work!
-                    Debug.log "panVector" <|
-                        if zoomIn then
-                            VectorMath.negate viewportCenterOffset
-                        else
-                            VectorMath.scalarMultiply viewportCenterOffset (2 ^ zoomDelta)
-
                 -- VectorMath.scalarMultiply viewportCenterOffset -1
                 -- (2 ^ zoomDelta)
-                model2 =
-                    Debug.log "model2" <|
-                        { model | zoom = model.zoom + zoomDelta }
+                newModel =
+                    { model | zoom = cleanZoom (model.zoom + zoomDelta) }
+
+                newZoom =
+                    newModel.zoom
             in
-                Debug.log "model3" <|
-                    panByPixels model2 panVector
+                if newZoom /= model.zoom then
+                    let
+                        viewportCenterOffset =
+                            Debug.log "viewportcenteroffset" <|
+                                getViewportCenterOffset model mouseOverState.position
+
+                        panVector =
+                            -- To be honest I don't know why the math is different for zooming in vs zooming out
+                            -- First I got zoom out working, then I hacked around at things until zoom in
+                            -- worked, and now they both work!
+                            Debug.log "panVector" <|
+                                if zoomIn then
+                                    VectorMath.negate viewportCenterOffset
+                                else
+                                    VectorMath.scalarMultiply viewportCenterOffset (2 ^ zoomDelta)
+                    in
+                        Debug.log "model3" <|
+                            panByPixels newModel panVector
+                else
+                    model
 
         -- model2
         Nothing ->
@@ -226,5 +233,39 @@ panByPixels model vector =
         { model | latLng = newLatLng }
 
 
+cleanZoom : Int -> Int
+cleanZoom zoom =
+    if zoom > 19 then
+        19
+    else if zoom < 2 then
+        2
+    else
+        zoom
 
---
+
+setZoom : Model -> Int -> Model
+setZoom model zoom =
+    { model | zoom = zoom }
+
+
+cleanLatLng : LatLng -> LatLng
+cleanLatLng { lat, lng } =
+    { lat = cleanLat lat
+    , lng = cleanLng lng
+    }
+
+
+cleanLng : Float -> Float
+cleanLng lng =
+    (fmod (lng + 180.0) 360.0)
+        + -180.0
+
+
+cleanLat : Float -> Float
+cleanLat lat =
+    if lat >= 90.0 then
+        90.0
+    else if lat <= -90.0 then
+        -90.0
+    else
+        lat

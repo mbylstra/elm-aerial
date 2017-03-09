@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import Model exposing (getViewportCenter, viewportPointToLatLng, zoomAtCursor)
+import Model exposing (cleanLat, cleanLatLng, cleanLng, getViewportCenter, setZoom, viewportPointToLatLng, zoomAtCursor)
 import Types exposing (..)
 import VectorMath exposing (difference)
 
@@ -17,6 +17,7 @@ update msg model =
                     lngString
                         |> String.toFloat
                         |> Result.withDefault (latLng.lng)
+                        |> cleanLng
 
                 newLatLng =
                     { latLng | lng = newLng }
@@ -32,6 +33,7 @@ update msg model =
                     latString
                         |> String.toFloat
                         |> Result.withDefault (latLng.lat)
+                        |> cleanLat
 
                 newLatLng =
                     { latLng | lat = newLat }
@@ -43,7 +45,7 @@ update msg model =
                 newModel =
                     zoomString
                         |> String.toInt
-                        |> Result.map (\zoom -> { model | zoom = zoom })
+                        |> Result.map (setZoom model)
                         |> Result.withDefault model
             in
                 newModel ! []
@@ -78,6 +80,7 @@ update msg model =
                                         newCenterLatLng =
                                             VectorMath.minusVector viewportCenter mouseMovedVector
                                                 |> viewportPointToLatLng model
+                                                |> cleanLatLng
 
                                         -- currentViewpoint
                                         -- so just thinking about lng/x, we need to move the center lat *backwards* (minus) from mouseMovedVector.x

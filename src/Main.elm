@@ -1,17 +1,14 @@
 module Main exposing (main)
 
 import Html
-import View
-import Model
-import Update
-import Types
+import Demo exposing (Model, Msg, view, update, init)
 
 
-main : Program Never Types.Model Types.Msg
+main : Program Never Model Msg
 main =
     Html.program
-        { view = View.view
-        , update = Update.update
+        { view = view
+        , update = update
         , subscriptions = \_ -> Sub.none
-        , init = ( Model.init, Cmd.none )
+        , init = init
         }

@@ -29,3 +29,8 @@ toRadians =
 toDegrees : Float -> Float
 toDegrees radians =
     radians * 180.0 / pi
+
+
+fmod : Float -> Float -> Float
+fmod a b =
+    a - b * (toFloat <| floor (a / b))
