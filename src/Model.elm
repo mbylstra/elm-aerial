@@ -269,3 +269,12 @@ cleanLat lat =
         -90.0
     else
         lat
+
+
+latLngToViewportPoint : Model -> LatLng -> Point2DInt
+latLngToViewportPoint model latLng =
+    let
+        worldPixelPoint =
+            latLngToWorldPixelPoint model.zoom latLng
+    in
+        worldPixelPointToViewportPoint worldPixelPoint model model.zoom 1.0

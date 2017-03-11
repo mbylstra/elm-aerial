@@ -76,11 +76,12 @@ markerView =
             [ ( "width", "10px" )
             , ( "height", "10px" )
             , ( "position", "absolute" )
-            , ( "top", "5px" )
-            , ( "left", "5px" )
+            , ( "top", "-5px" )
+            , ( "left", "-5px" )
             , ( "border", "1px solid black" )
             , ( "border-radius", "5px" )
             , ( "background-color", "rgba(0,0,0,0.5)" )
+            , ( "z-index", "10" )
             ]
         ]
         []

@@ -1,13 +1,7 @@
 module SlippyTiles exposing (..)
 
 import Geo exposing (LatLng)
-import SphericalMercator
-    exposing
-        ( projectLatToMapWidth
-        , projectLngToMapWidth
-        , unprojectLngFromMapWidth
-        , unprojectLatFromMapWidth
-        )
+import SphericalMercator exposing (projectLatToMapWidth, projectLngToMapWidth, unprojectLatFromMapWidth, unprojectLngFromMapWidth)
 
 
 tileSize : Int
@@ -124,9 +118,3 @@ worldPixelPointToLatLng { zoom, x, y } =
         { lat = lat
         , lng = lng
         }
-
-
-latLngToViewportPoint : LatLng -> Point2DInt
-latLngToViewportPoint latLng =
-    latLng
-        |> latLngToWorldPixelPoint Int

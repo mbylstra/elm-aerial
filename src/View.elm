@@ -2,12 +2,11 @@ module View exposing (..)
 
 import Geo exposing (LatLng)
 import Html exposing (Html, div, img, input, text)
-import Html.Attributes exposing (draggable, src, style, type_, value)
+import Html.Attributes exposing (class, draggable, src, style, type_, value)
 import Html.Events exposing (onInput, onMouseLeave, onMouseUp)
 import Html.Keyed
 import Maybe.Extra
-import Model exposing (getDraggingOffset)
-import ViewModel exposing (getTileViewModels, TileViewModel)
+import Model exposing (getDraggingOffset, latLngToViewportPoint)
 import MouseEvents exposing (onMouseEnter, relPos)
 import MouseWheel
 import SlippyTiles exposing (SlippyTileNumber, latLngToSlippyTileNumber, slippyTileUrl)
@@ -16,13 +15,13 @@ import VectorMath exposing (Point2DInt, Vector2DInt)
 import ViewModel exposing (TileViewModel, getTileViewModels)
 
 
-type alias Config =
-    { markerView : Html Msg
+type alias Config customMsg =
+    { markerView : Html (Msg customMsg)
     , markers : List LatLng
     }
 
 
-view : Config -> Model -> Html (Msg customMsg) -> Html (Msg customMsg)
+view : Config customMsg -> Model -> Html (Msg customMsg) -> Html (Msg customMsg)
 view config model innerView =
     let
         tileNumber : SlippyTileNumber
@@ -35,7 +34,7 @@ view config model innerView =
             slippyTileUrl "a" tileNumber
     in
         Html.div []
-            [ mapViewportView model
+            [ mapViewportView model config
             , innerView
             , input [ type_ "number", onInput UpdateLat, value <| toString model.latLng.lat ] []
             , input [ type_ "number", onInput UpdateLng, value <| toString model.latLng.lng ] []
@@ -44,8 +43,8 @@ view config model innerView =
             ]
 
 
-mapViewportView : Model -> Html (Msg customMsg)
-mapViewportView model =
+mapViewportView : Model -> Config customMsg -> Html (Msg customMsg)
+mapViewportView model config =
     let
         tileViewModels =
             getTileViewModels model model.resolution
@@ -69,28 +68,32 @@ mapViewportView model =
         -- if dragging, then get the drag offset and apply that to all images
         -- using translate2D, and use withDefault to set the offset to { x = 0, y = 0}
     in
-        Html.Keyed.node "div"
-            [ MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
-            , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
-            , onMouseUp MouseUp
-            , onMouseLeave MouseLeave
-            , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
-            , MouseEvents.onClick (MouseEvents.relPos >> MouseClick)
-            , MouseWheel.onMouseWheel (MouseWheel)
-              -- , on "mousemove" (DOM.target DOM.offsetWidth |> Json.map MouseMoved)
-            , style
-                [ ( "position", "relative" )
-                , ( "overflow", "hidden" )
-                , ( "width", (toString model.mapWidthPx) ++ "px" )
-                , ( "height", (toString model.mapHeightPx) ++ "px" )
-                , ( "background", "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJUlEQVQoU2N88eLFfwY0ICEhwYguxjgUFKI7GsTH5m4M3w1ChQCnziae7MntdQAAAABJRU5ErkJggg==) repeat" )
+        div [ class "aerial-viewport" ]
+            [ Html.Keyed.node "div"
+                [ class "tile-layer"
+                , MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
+                , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
+                , onMouseUp MouseUp
+                , onMouseLeave MouseLeave
+                , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
+                , MouseEvents.onClick (MouseEvents.relPos >> MouseClick)
+                , MouseWheel.onMouseWheel (MouseWheel)
+                  -- , on "mousemove" (DOM.target DOM.offsetWidth |> Json.map MouseMoved)
+                , style
+                    [ ( "position", "relative" )
+                    , ( "overflow", "hidden" )
+                    , ( "width", (toString model.mapWidthPx) ++ "px" )
+                    , ( "height", (toString model.mapHeightPx) ++ "px" )
+                    , ( "background", "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJUlEQVQoU2N88eLFfwY0ICEhwYguxjgUFKI7GsTH5m4M3w1ChQCnziae7MntdQAAAABJRU5ErkJggg==) repeat" )
+                    ]
                 ]
+                -- Html Float myButton = button [ on "click" (target offsetWidth) ] [ text "Click me!" ]
+                ((List.map (tileView { model = model, offset = tileOffset, z = 10 }) tileViewModels)
+                    ++ (List.map (tileView { model = model, offset = tileOffset, z = 2 }) lowResTileViewModels)
+                    ++ (List.map (tileView { model = model, offset = tileOffset, z = 1 }) lowResTileViewModels2)
+                )
+            , markerLayer model config
             ]
-            -- Html Float myButton = button [ on "click" (target offsetWidth) ] [ text "Click me!" ]
-            ((List.map (tileView { model = model, offset = tileOffset, z = 10 }) tileViewModels)
-                ++ (List.map (tileView { model = model, offset = tileOffset, z = 2 }) lowResTileViewModels)
-                ++ (List.map (tileView { model = model, offset = tileOffset, z = 1 }) lowResTileViewModels2)
-            )
 
 
 
@@ -141,6 +144,31 @@ tileNumberToHtmlKey tile =
     , tile.zoom |> toString
     ]
         |> String.join "-"
+
+
+markerLayer : Model -> Config customMsg -> Html (Msg customMsg)
+markerLayer model config =
+    let
+        markerWrappers =
+            config.markers
+                |> List.map (latLngToViewportPoint model)
+                |> List.map (markerWrapperView config.markerView)
+    in
+        div
+            [ class "marker-layer" ]
+            markerWrappers
+
+
+markerWrapperView : Html (Msg customMsg) -> Point2DInt -> Html (Msg customMsg)
+markerWrapperView markerView viewportPosition =
+    div
+        [ style
+            [ ( "position", "absolute" )
+            , ( "left", toString viewportPosition.x ++ "px" )
+            , ( "top", toString viewportPosition.y ++ "px" )
+            ]
+        ]
+        [ markerView ]
 
 
 
