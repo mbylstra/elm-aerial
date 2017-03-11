@@ -1,4 +1,4 @@
-module Types exposing (Msg(..), Model, MouseOverState)
+module Types exposing (Msg(..), OutMsg(..), Model, MouseOverState)
 
 import Geo exposing (LatLng)
 import Mouse
@@ -30,7 +30,7 @@ type alias MouseOverState =
 -- want the raw string.
 
 
-type Msg customMsg
+type Msg parentMsg
     = UpdateLat String
       -- we really have no interest in the raw latlng string. useless.
     | UpdateLng String
@@ -45,8 +45,16 @@ type Msg customMsg
       -- yes
     | MouseLeave
       -- yes
-    | MouseClick Mouse.Position
+    | MouseClickEvent Mouse.Position
       -- definitely
     | MouseWheel MouseWheelEvent
-      -- possiblty
-    | CustomMsg customMsg
+    | ParentMsg parentMsg
+
+
+
+-- possibly
+-- | CustomMsg customMsg
+
+
+type OutMsg parentMsgType
+    = MouseClick Mouse.Position

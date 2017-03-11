@@ -76,7 +76,7 @@ mapViewportView model config =
                 , onMouseUp MouseUp
                 , onMouseLeave MouseLeave
                 , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
-                , MouseEvents.onClick (MouseEvents.relPos >> MouseClick)
+                , MouseEvents.onClick (MouseEvents.relPos >> MouseClickEvent)
                 , MouseWheel.onMouseWheel (MouseWheel)
                   -- , on "mousemove" (DOM.target DOM.offsetWidth |> Json.map MouseMoved)
                 , style
@@ -168,7 +168,7 @@ markerWrapperView markerView viewportPosition =
             , ( "top", toString viewportPosition.y ++ "px" )
             ]
         ]
-        [ Html.map CustomMsg <| markerView ]
+        [ Html.map ParentMsg <| markerView ]
 
 
 

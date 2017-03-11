@@ -56,11 +56,11 @@ update action model =
                 --We *could* just return all messages, but we probably
                 -- only want to return our "public" api messages
                 -- for now let's return them all!
-                aerialModel =
+                ( aerialModel, msg ) =
                     AerialUpdate.update aerialMsg model.aerialModel
             in
                 case aerialMsg of
-                    AerialTypes.CustomMsg customMsg ->
+                    AerialTypes.ParentMsg customMsg ->
                         -- Just customMsg ->
                         let
                             ( newModel, _ ) =

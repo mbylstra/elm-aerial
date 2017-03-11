@@ -1,11 +1,11 @@
 module Update exposing (..)
 
 import Model exposing (cleanLat, cleanLatLng, cleanLng, getViewportCenter, setZoom, viewportPointToLatLng, zoomAtCursor)
-import Types exposing (Msg(..), Model)
+import Types exposing (Msg(..), OutMsg(..), Model)
 import VectorMath exposing (difference)
 
 
-update : Msg customMsg -> Model -> Model
+update : Msg parentMsg -> Model -> ( Model, Maybe OutMsg )
 update msg model =
     case msg of
         UpdateLng lngString ->
@@ -22,7 +22,7 @@ update msg model =
                 newLatLng =
                     { latLng | lng = newLng }
             in
-                { model | latLng = newLatLng }
+                ( { model | latLng = newLatLng }, Nothing )
 
         UpdateLat latString ->
             let
@@ -38,7 +38,7 @@ update msg model =
                 newLatLng =
                     { latLng | lat = newLat }
             in
-                { model | latLng = newLatLng }
+                ( { model | latLng = newLatLng }, Nothing )
 
         UpdateZoom zoomString ->
             let
@@ -48,7 +48,7 @@ update msg model =
                         |> Result.map (setZoom model)
                         |> Result.withDefault model
             in
-                newModel
+                ( newModel, Nothing )
 
         MouseDown position ->
             let
@@ -57,7 +57,7 @@ update msg model =
                         |> Maybe.map
                             (\mouseOverState -> { mouseOverState | down = Just { startPosition = position } })
             in
-                { model | maybeMouseOver = maybeMouseOver }
+                ( { model | maybeMouseOver = maybeMouseOver }, Nothing )
 
         MouseUp ->
             let
@@ -100,7 +100,7 @@ update msg model =
                                     -- useful we should do in this case, so do nothing.
                                     model
             in
-                newModel
+                ( newModel, Nothing )
 
         MouseMove position ->
             -- the annoying thing is that we need to preserver the mouseDown state
@@ -111,15 +111,23 @@ update msg model =
                         |> Maybe.map
                             (\mouseOverState -> { mouseOverState | position = position })
             in
-                { model | maybeMouseOver = maybeMouseOver }
+                ( { model | maybeMouseOver = maybeMouseOver }, Nothing )
 
         MouseEnter position ->
-            { model | maybeMouseOver = Just { position = position, down = Nothing } }
+            ( { model | maybeMouseOver = Just { position = position, down = Nothing } }, Nothing )
 
         MouseLeave ->
-            { model | maybeMouseOver = Nothing }
+            -- we have a problem, because mouseovering a marker causes a mouseleave
+            -- event to happen.
+            -- One idea is to get the position during mouseleave, if it's within the viewport
+            -- then it's not really a mouseleave. I suppose you could figure it out with
+            -- the dom, but this seems pretty reasonable as we define the size of the
+            -- viewport
+            -- Might need to watch out for css changing the dimensions of the viewport though!
+            -- This is good reason to expose only public events
+            ( { model | maybeMouseOver = Nothing }, Nothing )
 
-        MouseClick position ->
+        MouseClickEvent position ->
             let
                 _ =
                     Debug.log "latlng" (viewportPointToLatLng model position)
@@ -127,7 +135,7 @@ update msg model =
                 -- _ =
                 --     Debug.log "position" position
             in
-                model
+                ( model, Nothing )
 
         MouseWheel wheelEvent ->
             let
@@ -144,8 +152,8 @@ update msg model =
                         Nothing ->
                             model
             in
-                newModel
+                ( newModel, Nothing )
 
-        CustomMsg customMsg ->
+        ParentMsg parentMsg ->
             -- now whattawe do??
-            model
+            ( model, Nothing )
