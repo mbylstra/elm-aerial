@@ -50,19 +50,26 @@ update action model =
 
         AerialMsg aerialMsg ->
             let
-                ( aerialModel, maybeMsg ) =
+                -- Here we might get an AerialMsg or one of our own messages.
+                --We *could* just return all messages, but we probably
+                -- only want to return our "public" api messages
+                -- for now let's return them all!
+                aerialModel =
                     AerialUpdate.update aerialMsg model.aerialModel
             in
-                case maybeMsg of
-                    Just customMsg ->
+                case aerialMsg of
+                    AerialTypes.CustomMsg customMsg ->
+                        -- Just customMsg ->
                         let
                             ( newModel, _ ) =
                                 update customMsg model
                         in
-                            { newModel | aerialModel = aerialModel } ! []
+                            { newModel | aerialModel = aerialModel }
+                                ! []
 
-                    Nothing ->
-                        { model | aerialModel = aerialModel } ! []
+                    _ ->
+                        { model | aerialModel = aerialModel }
+                            ! []
 
 
 

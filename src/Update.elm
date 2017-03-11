@@ -5,7 +5,7 @@ import Types exposing (..)
 import VectorMath exposing (difference)
 
 
-update : Msg customMsg -> Model -> ( Model, Maybe customMsg )
+update : Msg customMsg -> Model -> Model
 update msg model =
     case msg of
         UpdateLng lngString ->
@@ -22,7 +22,7 @@ update msg model =
                 newLatLng =
                     { latLng | lng = newLng }
             in
-                ( { model | latLng = newLatLng }, Nothing )
+                { model | latLng = newLatLng }
 
         UpdateLat latString ->
             let
@@ -38,7 +38,7 @@ update msg model =
                 newLatLng =
                     { latLng | lat = newLat }
             in
-                ( { model | latLng = newLatLng }, Nothing )
+                { model | latLng = newLatLng }
 
         UpdateZoom zoomString ->
             let
@@ -48,7 +48,7 @@ update msg model =
                         |> Result.map (setZoom model)
                         |> Result.withDefault model
             in
-                ( newModel, Nothing )
+                newModel
 
         MouseDown position ->
             let
@@ -57,7 +57,7 @@ update msg model =
                         |> Maybe.map
                             (\mouseOverState -> { mouseOverState | down = Just { startPosition = position } })
             in
-                ( { model | maybeMouseOver = maybeMouseOver }, Nothing )
+                { model | maybeMouseOver = maybeMouseOver }
 
         MouseUp ->
             let
@@ -100,7 +100,7 @@ update msg model =
                                     -- useful we should do in this case, so do nothing.
                                     model
             in
-                ( newModel, Nothing )
+                newModel
 
         MouseMove position ->
             -- the annoying thing is that we need to preserver the mouseDown state
@@ -111,13 +111,13 @@ update msg model =
                         |> Maybe.map
                             (\mouseOverState -> { mouseOverState | position = position })
             in
-                ( { model | maybeMouseOver = maybeMouseOver }, Nothing )
+                { model | maybeMouseOver = maybeMouseOver }
 
         MouseEnter position ->
-            ( { model | maybeMouseOver = Just { position = position, down = Nothing } }, Nothing )
+            { model | maybeMouseOver = Just { position = position, down = Nothing } }
 
         MouseLeave ->
-            ( { model | maybeMouseOver = Nothing }, Nothing )
+            { model | maybeMouseOver = Nothing }
 
         MouseClick position ->
             let
@@ -127,7 +127,7 @@ update msg model =
                 -- _ =
                 --     Debug.log "position" position
             in
-                ( model, Nothing )
+                model
 
         MouseWheel wheelEvent ->
             let
@@ -144,8 +144,8 @@ update msg model =
                         Nothing ->
                             model
             in
-                ( newModel, Nothing )
+                newModel
 
         CustomMsg customMsg ->
             -- now whattawe do??
-            ( model, Just customMsg )
+            model
