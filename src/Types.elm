@@ -1,4 +1,4 @@
-module Types exposing (..)
+module Types exposing (Msg(..), Model, MouseOverState)
 
 import Geo exposing (LatLng)
 import Mouse
@@ -22,15 +22,31 @@ type alias MouseOverState =
     { position : Point2DInt, down : Maybe { startPosition : Vector2DInt } }
 
 
+
+-- which of these should be "public messages"?
+-- Some of them are at least a bit pointless, cos you can get it from the model
+-- after the update (eg UpdateLat). Also, we have no interest. However,
+-- we will want to know if lat lng or zoom has been updated, but we really don't
+-- want the raw string.
+
+
 type Msg customMsg
     = UpdateLat String
+      -- we really have no interest in the raw latlng string. useless.
     | UpdateLng String
     | UpdateZoom String
     | MouseDown Mouse.Position
+      -- probably
     | MouseUp
+      -- probably
     | MouseMove Mouse.Position
+      -- yes
     | MouseEnter Mouse.Position
+      -- yes
     | MouseLeave
+      -- yes
     | MouseClick Mouse.Position
+      -- definitely
     | MouseWheel MouseWheelEvent
+      -- possiblty
     | CustomMsg customMsg

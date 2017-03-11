@@ -1,7 +1,7 @@
 module Update exposing (..)
 
 import Model exposing (cleanLat, cleanLatLng, cleanLng, getViewportCenter, setZoom, viewportPointToLatLng, zoomAtCursor)
-import Types exposing (..)
+import Types exposing (Msg(..), Model)
 import VectorMath exposing (difference)
 
 

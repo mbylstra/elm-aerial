@@ -4,7 +4,7 @@ import Geo exposing (LatLng)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Model as AerialModel
+import Model as AerialModel exposing (viewportPointToLatLng)
 import Types as AerialTypes
 import Update as AerialUpdate
 import View as AerialView
@@ -17,6 +17,7 @@ type alias Model =
     { prop1 : String
     , prop2 : Int
     , aerialModel : AerialTypes.Model
+    , markers : List LatLng
     }
 
 
@@ -25,6 +26,7 @@ init =
     { prop1 = "hello"
     , prop2 = 2
     , aerialModel = AerialModel.init
+    , markers = [ LatLng -37.814 144.96332, LatLng -33.86785 151.20732 ]
     }
         ! []
 
@@ -67,6 +69,20 @@ update action model =
                             { newModel | aerialModel = aerialModel }
                                 ! []
 
+                    AerialTypes.MouseDown position ->
+                        -- this just gives the position, but we can give position + aerialModel
+                        -- to get the latlng
+                        -- then we add it to the list of lat lngs.. pretty easy!
+                        let
+                            latLng =
+                                viewportPointToLatLng model.aerialModel position
+
+                            newMarkers =
+                                model.markers ++ [ latLng ]
+                        in
+                            { model | aerialModel = aerialModel, markers = newMarkers }
+                                ! []
+
                     _ ->
                         { model | aerialModel = aerialModel }
                             ! []
@@ -104,7 +120,7 @@ view model =
         aerialViewConfig : AerialView.Config Msg
         aerialViewConfig =
             { markerView = markerView
-            , markers = [ LatLng -37.814 144.96332, LatLng -33.86785 151.20732 ]
+            , markers = model.markers
             }
 
         aerialView =
