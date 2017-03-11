@@ -95,10 +95,6 @@ latLngToSlippyTileNumber zoom latLng =
     )
 
 
-
--- This is broken
-
-
 worldPixelPointToLatLng : WorldMapPixelPoint -> LatLng
 worldPixelPointToLatLng { zoom, x, y } =
     let
@@ -128,3 +124,9 @@ worldPixelPointToLatLng { zoom, x, y } =
         { lat = lat
         , lng = lng
         }
+
+
+latLngToViewportPoint : LatLng -> Point2DInt
+latLngToViewportPoint latLng =
+    latLng
+        |> latLngToWorldPixelPoint Int

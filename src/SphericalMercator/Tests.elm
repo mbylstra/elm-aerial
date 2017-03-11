@@ -2,15 +2,7 @@ module SphericalMercator.Tests exposing (..)
 
 import Test exposing (..)
 import Expect
-import SphericalMercator
-    exposing
-        ( latToProjectedRadians
-        , latFromProjectedRadians
-        , projectLatToMeters
-        , projectLngToMeters
-        , unprojectLngFromMeters
-        , unprojectLatFromMeters
-        )
+import SphericalMercator exposing (latToProjectedRadians, latFromProjectedRadians, projectLatToMeters, projectLngToMeters, unprojectLatFromMeters)
 import Geo exposing (LatLng)
 
 

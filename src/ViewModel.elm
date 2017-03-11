@@ -1,6 +1,6 @@
 module ViewModel exposing (..)
 
-import Model exposing (getViewportBottomRightWorldPixel, getViewportTopLeftWorldPixel, getWorldWidthInTiles, worldPixelPointToViewportPoint)
+import Model exposing (getViewportBottomRightWorldPixel, getViewportTopLeftWorldPixel, worldPixelPointToViewportPoint)
 import SlippyTiles exposing (SlippyTileNumber, getTileTopLeftWorldPixelPoint, worldPixelPointToSlippyTileNumber)
 import Tiles exposing (getTileSize, getTileViewZoom)
 import Types exposing (..)
