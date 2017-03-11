@@ -2,14 +2,14 @@ module View exposing (..)
 
 import Html exposing (Html, div, img, input, text)
 import Html.Attributes exposing (draggable, src, style, type_, value)
-import Html.Events exposing (on, onInput, onMouseDown, onMouseLeave, onMouseUp)
+import Html.Events exposing (onInput, onMouseLeave, onMouseUp)
 import Html.Keyed
-import Maybe.Extra exposing (join)
+import Maybe.Extra
 import Model exposing (getDraggingOffset)
 import ViewModel exposing (getTileViewModels, TileViewModel)
-import MouseEvents exposing (onMouseEnter, relPos)
+import MouseEvents
 import MouseWheel
-import SlippyTiles exposing (SlippyTileNumber, getTileTopLeftWorldPixelPoint, latLngToSlippyTileNumber, latLngToWorldPixelPoint, slippyTileUrl, worldPixelPointToSlippyTileNumber)
+import SlippyTiles exposing (SlippyTileNumber, latLngToSlippyTileNumber, slippyTileUrl)
 import Types exposing (..)
 import VectorMath exposing (Point2DInt, Vector2DInt)
 

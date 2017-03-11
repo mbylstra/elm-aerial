@@ -1,11 +1,11 @@
 module Model exposing (..)
 
 import Geo exposing (LatLng)
-import SlippyTiles exposing (WorldMapPixelPoint, getTileTopLeftWorldPixelPoint, latLngToWorldPixelPoint, worldPixelPointToLatLng, worldPixelPointToSlippyTileNumber)
+import SlippyTiles exposing (WorldMapPixelPoint, latLngToWorldPixelPoint, worldPixelPointToLatLng)
 import Tiles
 import Types exposing (..)
 import Util exposing (fmod)
-import VectorMath exposing (Point2DInt, Vector2DInt, difference, scalarMultiply, timesFloatToInt)
+import VectorMath exposing (Point2DInt, Vector2DInt, difference, timesFloatToInt)
 
 
 initLatLng : LatLng
@@ -257,7 +257,7 @@ cleanLatLng { lat, lng } =
 
 cleanLng : Float -> Float
 cleanLng lng =
-    (fmod (lng + 180.0) 360.0)
+    fmod (lng + 180.0) 360.0
         + -180.0
 
 

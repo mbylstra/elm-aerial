@@ -1,5 +1,5 @@
 {
-  {
+  "checks" : {
     "ExposeAll": false,
     "DebugLog": false
   }
