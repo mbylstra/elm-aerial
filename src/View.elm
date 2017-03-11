@@ -16,13 +16,13 @@ import ViewModel exposing (TileViewModel, getTileViewModels)
 
 
 type alias Config customMsg =
-    { markerView : Html (Msg customMsg)
+    { markerView : Html customMsg
     , markers : List LatLng
     }
 
 
-view : Config customMsg -> Model -> Html (Msg customMsg) -> Html (Msg customMsg)
-view config model innerView =
+view : Config customMsg -> Model -> Html (Msg customMsg)
+view config model =
     let
         tileNumber : SlippyTileNumber
         tileNumber =
@@ -35,7 +35,7 @@ view config model innerView =
     in
         Html.div []
             [ mapViewportView model config
-            , innerView
+              -- , innerView
             , input [ type_ "number", onInput UpdateLat, value <| toString model.latLng.lat ] []
             , input [ type_ "number", onInput UpdateLng, value <| toString model.latLng.lng ] []
             , input [ type_ "number", value <| toString model.zoom, onInput UpdateZoom ] []
@@ -159,7 +159,7 @@ markerLayer model config =
             markerWrappers
 
 
-markerWrapperView : Html (Msg customMsg) -> Point2DInt -> Html (Msg customMsg)
+markerWrapperView : Html customMsg -> Point2DInt -> Html (Msg customMsg)
 markerWrapperView markerView viewportPosition =
     div
         [ style
@@ -168,7 +168,7 @@ markerWrapperView markerView viewportPosition =
             , ( "top", toString viewportPosition.y ++ "px" )
             ]
         ]
-        [ markerView ]
+        [ Html.map CustomMsg <| markerView ]
 
 
 

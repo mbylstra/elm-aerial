@@ -69,7 +69,7 @@ update action model =
 -- VIEW
 
 
-markerView : Html msg
+markerView : Html Msg
 markerView =
     div
         [ style
@@ -83,6 +83,7 @@ markerView =
             , ( "background-color", "rgba(0,0,0,0.5)" )
             , ( "z-index", "10" )
             ]
+        , onClick ButtonClicked
         ]
         []
 
@@ -90,17 +91,17 @@ markerView =
 view : Model -> Html Msg
 view model =
     let
-        myButton : Html (AerialTypes.Msg Msg)
-        myButton =
-            button [ onClick (AerialTypes.CustomMsg ButtonClicked) ] [ text "Button" ]
-
+        -- myButton : Html (AerialTypes.Msg Msg)
+        -- myButton =
+        --     button [ onClick (AerialTypes.CustomMsg ButtonClicked) ] [ text "Button" ]
+        aerialViewConfig : AerialView.Config Msg
         aerialViewConfig =
             { markerView = markerView
             , markers = [ LatLng -37.814 144.96332, LatLng -33.86785 151.20732 ]
             }
 
         aerialView =
-            (AerialView.view aerialViewConfig model.aerialModel myButton)
+            (AerialView.view aerialViewConfig model.aerialModel)
     in
         div []
             [ Html.map AerialMsg <| aerialView
