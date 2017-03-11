@@ -2,7 +2,6 @@ module Types exposing (..)
 
 import Geo exposing (LatLng)
 import Mouse
-import SlippyTiles exposing (SlippyTileNumber)
 import VectorMath exposing (Point2DInt, Vector2DInt)
 import MouseWheel exposing (MouseWheelEvent)
 
@@ -23,7 +22,7 @@ type alias MouseOverState =
     { position : Point2DInt, down : Maybe { startPosition : Vector2DInt } }
 
 
-type Msg
+type Msg customMsg
     = UpdateLat String
     | UpdateLng String
     | UpdateZoom String
@@ -34,3 +33,4 @@ type Msg
     | MouseLeave
     | MouseClick Mouse.Position
     | MouseWheel MouseWheelEvent
+    | CustomMsg customMsg

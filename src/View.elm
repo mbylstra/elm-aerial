@@ -1,21 +1,28 @@
 module View exposing (..)
 
+import Geo exposing (LatLng)
 import Html exposing (Html, div, img, input, text)
 import Html.Attributes exposing (draggable, src, style, type_, value)
 import Html.Events exposing (on, onInput, onMouseDown, onMouseLeave, onMouseUp)
 import Html.Keyed
 import Maybe.Extra exposing (join)
 import Model exposing (getDraggingOffset)
-import ViewModel exposing (getTileViewModels, TileViewModel)
 import MouseEvents exposing (onMouseEnter, relPos)
 import MouseWheel
 import SlippyTiles exposing (SlippyTileNumber, getTileTopLeftWorldPixelPoint, latLngToSlippyTileNumber, latLngToWorldPixelPoint, slippyTileUrl, worldPixelPointToSlippyTileNumber)
 import Types exposing (..)
 import VectorMath exposing (Point2DInt, Vector2DInt)
+import ViewModel exposing (TileViewModel, getTileViewModels)
 
 
-view : Model -> Html Msg
-view model =
+type alias Config =
+    { markerView : Html Msg
+    , markers : List LatLng
+    }
+
+
+view : Config -> Model -> Html (Msg customMsg) -> Html (Msg customMsg)
+view config model innerView =
     let
         tileNumber : SlippyTileNumber
         tileNumber =
@@ -28,6 +35,7 @@ view model =
     in
         Html.div []
             [ mapViewportView model
+            , innerView
             , input [ type_ "number", onInput UpdateLat, value <| toString model.latLng.lat ] []
             , input [ type_ "number", onInput UpdateLng, value <| toString model.latLng.lng ] []
             , input [ type_ "number", value <| toString model.zoom, onInput UpdateZoom ] []
@@ -35,7 +43,7 @@ view model =
             ]
 
 
-mapViewportView : Model -> Html Msg
+mapViewportView : Model -> Html (Msg customMsg)
 mapViewportView model =
     let
         tileViewModels =

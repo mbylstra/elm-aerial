@@ -1,15 +1,13 @@
 module Demo exposing (Model, Msg, init, update, view)
 
+import Geo exposing (LatLng)
 import Html exposing (..)
-
-
--- import Html.Attributes exposing (..)
-
+import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Types as AerialTypes
-import View as AerialView
-import Update as AerialUpdate
 import Model as AerialModel
+import Types as AerialTypes
+import Update as AerialUpdate
+import View as AerialView
 
 
 -- MODEL
@@ -36,43 +34,73 @@ init =
 
 
 type Msg
-    = M1
-    | M2
-    | M3
-    | AerialMsg AerialTypes.Msg
+    = AerialMsg (AerialTypes.Msg Msg)
+    | ButtonClicked
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
     case action of
-        M1 ->
-            { model | prop2 = 1 } ! []
-
-        M2 ->
-            { model | prop2 = 2 } ! []
-
-        M3 ->
-            { model | prop2 = 3 } ! []
+        ButtonClicked ->
+            let
+                _ =
+                    Debug.log "button clicked" True
+            in
+                { model | prop2 = 3 } ! []
 
         AerialMsg aerialMsg ->
             let
-                ( aerialModel, aerialCmd ) =
+                ( aerialModel, maybeMsg ) =
                     AerialUpdate.update aerialMsg model.aerialModel
             in
-                { model | aerialModel = aerialModel } ! [ Cmd.map AerialMsg aerialCmd ]
+                case maybeMsg of
+                    Just customMsg ->
+                        let
+                            ( newModel, _ ) =
+                                update customMsg model
+                        in
+                            { newModel | aerialModel = aerialModel } ! []
+
+                    Nothing ->
+                        { model | aerialModel = aerialModel } ! []
 
 
 
 -- VIEW
 
 
+markerView : Html msg
+markerView =
+    div
+        [ style
+            [ ( "width", "10px" )
+            , ( "height", "10px" )
+            , ( "position", "absolute" )
+            , ( "top", "5px" )
+            , ( "left", "5px" )
+            , ( "border", "1px solid black" )
+            , ( "border-radius", "5px" )
+            , ( "background-color", "rgba(0,0,0,0.5)" )
+            ]
+        ]
+        []
+
+
 view : Model -> Html Msg
 view model =
-    div []
-        [ button [ onClick M1 ] [ text "M1" ]
-        , div
-            []
-            [ text (toString model) ]
-        , button [ onClick M2 ] [ text "M2" ]
-        , Html.map AerialMsg <| AerialView.view model.aerialModel
-        ]
+    let
+        myButton : Html (AerialTypes.Msg Msg)
+        myButton =
+            button [ onClick (AerialTypes.CustomMsg ButtonClicked) ] [ text "Button" ]
+
+        aerialViewConfig =
+            { markerView = markerView
+            , markers = [ LatLng -37.814 144.96332, LatLng -33.86785 151.20732 ]
+            }
+
+        aerialView =
+            (AerialView.view aerialViewConfig model.aerialModel myButton)
+    in
+        div []
+            [ Html.map AerialMsg <| aerialView
+            ]
