@@ -2,7 +2,6 @@ module Types exposing (..)
 
 import Geo exposing (LatLng)
 import Mouse
-import SlippyTiles exposing (SlippyTileNumber)
 import VectorMath exposing (Point2DInt, Vector2DInt)
 import MouseWheel exposing (MouseWheelEvent)
 
@@ -31,6 +30,6 @@ type Msg
     | MouseUp
     | MouseMove Mouse.Position
     | MouseEnter Mouse.Position
-    | MouseLeave
+    | MouseLeave Mouse.Position
     | MouseClick Mouse.Position
     | MouseWheel MouseWheelEvent

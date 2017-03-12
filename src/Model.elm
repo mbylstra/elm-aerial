@@ -5,7 +5,7 @@ import SlippyTiles exposing (WorldMapPixelPoint, latLngToWorldPixelPoint, worldP
 import Tiles
 import Types exposing (..)
 import Util exposing (fmod)
-import VectorMath exposing (Point2DInt, Vector2DInt, difference, timesFloatToInt)
+import VectorMath exposing (Point2DInt, RectangleInt, Vector2DInt, difference, isIn, timesFloatToInt)
 
 
 initLatLng : LatLng
@@ -269,3 +269,15 @@ cleanLat lat =
         -90.0
     else
         lat
+
+
+viewportRectangle : Model -> RectangleInt
+viewportRectangle model =
+    { topLeft = { x = 0, y = 0 }
+    , bottomRight = { x = model.mapWidthPx, y = model.mapHeightPx }
+    }
+
+
+isInViewport : Model -> Point2DInt -> Bool
+isInViewport model position =
+    isIn (viewportRectangle model) position

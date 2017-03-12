@@ -64,7 +64,7 @@ mapViewportView model =
             [ MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
             , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
             , onMouseUp MouseUp
-            , onMouseLeave MouseLeave
+            , MouseEvents.onMouseLeave (MouseEvents.relPos >> MouseLeave)
             , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
             , MouseEvents.onClick (MouseEvents.relPos >> MouseClick)
             , MouseWheel.onMouseWheel (MouseWheel)

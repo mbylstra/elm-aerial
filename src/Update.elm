@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import Model exposing (cleanLat, cleanLatLng, cleanLng, getViewportCenter, setZoom, viewportPointToLatLng, zoomAtCursor)
+import Model exposing (cleanLat, cleanLatLng, cleanLng, getViewportCenter, isInViewport, setZoom, viewportPointToLatLng, zoomAtCursor)
 import Types exposing (..)
 import VectorMath exposing (difference)
 
@@ -116,8 +116,11 @@ update msg model =
         MouseEnter position ->
             { model | maybeMouseOver = Just { position = position, down = Nothing } } ! []
 
-        MouseLeave ->
-            { model | maybeMouseOver = Nothing } ! []
+        MouseLeave position ->
+            if isInViewport model position then
+                model ! []
+            else
+                { model | maybeMouseOver = Nothing } ! []
 
         MouseClick position ->
             let
