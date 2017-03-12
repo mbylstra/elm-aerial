@@ -13,6 +13,7 @@ import SlippyTiles exposing (SlippyTileNumber, latLngToSlippyTileNumber, slippyT
 import Types exposing (..)
 import VectorMath exposing (Point2DInt, Vector2DInt)
 import ViewModel exposing (TileViewModel, getTileViewModels)
+import MouseEventPositions exposing (onMouseMoveGetPosition)
 
 
 type alias Config customMsg =
@@ -71,7 +72,8 @@ mapViewportView model config =
         div
             [ class "aerial-viewport"
             , MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
-            , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
+              -- , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
+            , onMouseMoveGetPosition MouseMove
             , onMouseUp MouseUp
             , MouseEvents.onMouseLeave (MouseEvents.relPos >> MouseLeave)
             , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
