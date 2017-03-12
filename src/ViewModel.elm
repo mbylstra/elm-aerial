@@ -19,39 +19,39 @@ getTileViewModels : Model -> Float -> List TileViewModel
 getTileViewModels model resolution =
     let
         zoom =
-            Debug.log "tileViewZoom" <|
-                getTileViewZoom model.zoom resolution
+            -- Debug.log "tileViewZoom" <|
+            getTileViewZoom model.zoom resolution
 
         worldWidthInTiles =
-            Debug.log "tileView worldWidthInTiles" <|
-                Tiles.getWorldWidthInTiles zoom
+            -- Debug.log "tileView worldWidthInTiles" <|
+            Tiles.getWorldWidthInTiles zoom
 
         viewportTopLeftWorldPixel =
-            Debug.log "vieportTopLeftWOrldPixle" <|
-                getViewportTopLeftWorldPixel model zoom resolution
+            -- Debug.log "vieportTopLeftWOrldPixle" <|
+            getViewportTopLeftWorldPixel model zoom resolution
 
         viewportBottomRightWorldPixel =
-            Debug.log "vieportBottomRightLeftWorldPixel" <|
-                getViewportBottomRightWorldPixel model zoom resolution
+            -- Debug.log "vieportBottomRightLeftWorldPixel" <|
+            getViewportBottomRightWorldPixel model zoom resolution
 
         -- This is where we want to take current resolution into account
         -- also rember that the zoom number is smaller or greater depending
         -- on the zoom amount
         topLeftTileNumber =
-            Debug.log "topLeftTileNumber" <|
-                worldPixelPointToSlippyTileNumber viewportTopLeftWorldPixel
+            -- Debug.log "topLeftTileNumber" <|
+            worldPixelPointToSlippyTileNumber viewportTopLeftWorldPixel
 
         topLeftTileWorldPixelPoint =
-            Debug.log "topLeftTileWorldPixelPoint" <|
-                getTileTopLeftWorldPixelPoint topLeftTileNumber
+            -- Debug.log "topLeftTileWorldPixelPoint" <|
+            getTileTopLeftWorldPixelPoint topLeftTileNumber
 
         topLeftTileViewportPoint =
-            Debug.log "topLeftTileViewportPoint" <|
-                worldPixelPointToViewportPoint topLeftTileWorldPixelPoint model zoom resolution
+            -- Debug.log "topLeftTileViewportPoint" <|
+            worldPixelPointToViewportPoint topLeftTileWorldPixelPoint model zoom resolution
 
         tileSize =
-            Debug.log "tileView tileSize" <|
-                getTileSize resolution
+            -- Debug.log "tileView tileSize" <|
+            getTileSize resolution
 
         -- numColumns =
         --     -- this needs to take into account resolution
@@ -64,18 +64,18 @@ getTileViewModels model resolution =
         --             + 1
         --         )
         numColumns =
-            Debug.log "numColumns" <|
-                ((timesFloatToInt (viewportBottomRightWorldPixel.x - topLeftTileWorldPixelPoint.x) (1.0 / resolution))
-                    // tileSize
-                )
-                    + 1
+            -- Debug.log "numColumns" <|
+            ((timesFloatToInt (viewportBottomRightWorldPixel.x - topLeftTileWorldPixelPoint.x) (1.0 / resolution))
+                // tileSize
+            )
+                + 1
 
         numRows =
-            Debug.log "numColumns" <|
-                ((timesFloatToInt (viewportBottomRightWorldPixel.y - topLeftTileWorldPixelPoint.y) (1.0 / resolution))
-                    // tileSize
-                )
-                    + 1
+            -- Debug.log "numColumns" <|
+            ((timesFloatToInt (viewportBottomRightWorldPixel.y - topLeftTileWorldPixelPoint.y) (1.0 / resolution))
+                // tileSize
+            )
+                + 1
 
         matrix : List ( Int, Int )
         matrix =

@@ -15,6 +15,12 @@ type alias Point2DInt =
     }
 
 
+type alias RectangleInt =
+    { topLeft : Point2DInt
+    , bottomRight : Point2DInt
+    }
+
+
 fromMousePosition : Mouse.Position -> Point2DInt
 fromMousePosition mousePosition =
     { x = mousePosition.x
@@ -71,3 +77,11 @@ scalarMultiplyByFloat v amount =
     { x = timesFloatToInt v.x amount
     , y = timesFloatToInt v.y amount
     }
+
+
+isIn : RectangleInt -> Point2DInt -> Bool
+isIn rectangle point =
+    (point.x >= rectangle.topLeft.x)
+        && (point.y >= rectangle.topLeft.y)
+        && (point.x <= rectangle.bottomRight.x)
+        && (point.y <= rectangle.bottomRight.y)

@@ -1,6 +1,6 @@
 module Update exposing (..)
 
-import Model exposing (cleanLat, cleanLatLng, cleanLng, getViewportCenter, setZoom, viewportPointToLatLng, zoomAtCursor)
+import Model exposing (cleanLat, cleanLatLng, cleanLng, getViewportCenter, isInViewport, setZoom, viewportPointToLatLng, zoomAtCursor)
 import Types exposing (Msg(..), OutMsg(..), Model)
 import VectorMath exposing (difference)
 
@@ -72,7 +72,7 @@ update msg model =
                                 Just mouseDownState ->
                                     let
                                         mouseMovedVector =
-                                            Debug.log "mouseMovedVector" (difference mouseDownState.startPosition mouseOverState.position)
+                                            difference mouseDownState.startPosition mouseOverState.position
 
                                         viewportCenter =
                                             getViewportCenter model
@@ -116,26 +116,20 @@ update msg model =
         MouseEnter position ->
             ( { model | maybeMouseOver = Just { position = position, down = Nothing } }, Nothing )
 
-        MouseLeave ->
-            -- we have a problem, because mouseovering a marker causes a mouseleave
-            -- event to happen.
-            -- One idea is to get the position during mouseleave, if it's within the viewport
-            -- then it's not really a mouseleave. I suppose you could figure it out with
-            -- the dom, but this seems pretty reasonable as we define the size of the
-            -- viewport
-            -- Might need to watch out for css changing the dimensions of the viewport though!
-            -- This is good reason to expose only public events
-            ( { model | maybeMouseOver = Nothing }, Nothing )
+        MouseLeave position ->
+            if (Debug.log "isInViewport" <| isInViewport model position) then
+                ( model, Nothing )
+            else
+                ( { model | maybeMouseOver = Nothing }, Nothing )
 
         MouseClickEvent position ->
-            let
-                _ =
-                    Debug.log "latlng" (viewportPointToLatLng model position)
-
-                -- _ =
-                --     Debug.log "position" position
-            in
-                ( model, Just <| MouseClick position )
+            -- let
+            --     _ =
+            --         Debug.log "latlng" (viewportPointToLatLng model position)
+            -- _ =
+            --     Debug.log "position" position
+            -- in
+            ( model, Just <| MouseClick position )
 
         MouseWheel wheelEvent ->
             let

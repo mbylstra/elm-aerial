@@ -109,13 +109,13 @@ markerView : Html Msg
 markerView =
     div
         [ style
-            [ ( "width", "10px" )
-            , ( "height", "10px" )
+            [ ( "width", "20px" )
+            , ( "height", "20px" )
             , ( "position", "absolute" )
-            , ( "top", "-5px" )
-            , ( "left", "-5px" )
+            , ( "top", "-10px" )
+            , ( "left", "-10px" )
             , ( "border", "1px solid black" )
-            , ( "border-radius", "5px" )
+            , ( "border-radius", "10px" )
             , ( "background-color", "rgba(0,0,0,0.5)" )
             , ( "z-index", "10" )
             ]

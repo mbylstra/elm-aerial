@@ -5,7 +5,7 @@ import SlippyTiles exposing (WorldMapPixelPoint, latLngToWorldPixelPoint, worldP
 import Tiles
 import Types exposing (..)
 import Util exposing (fmod)
-import VectorMath exposing (Point2DInt, Vector2DInt, difference, timesFloatToInt)
+import VectorMath exposing (Point2DInt, RectangleInt, Vector2DInt, difference, isIn, timesFloatToInt)
 
 
 initLatLng : LatLng
@@ -97,14 +97,14 @@ getWorldWidthInTiles model =
 -}
 mapWidthInWorldPixels : Int -> Float -> Int
 mapWidthInWorldPixels mapWidthPx resolution =
-    Debug.log "mapWidthInWorldPixels" <|
-        timesFloatToInt mapWidthPx resolution
+    -- Debug.log "mapWidthInWorldPixels" <|
+    timesFloatToInt mapWidthPx resolution
 
 
 mapHeightInWorldPixels : Int -> Float -> Int
 mapHeightInWorldPixels mapHeightPx resolution =
-    Debug.log "mapHeightInWorldPixels" <|
-        timesFloatToInt mapHeightPx resolution
+    -- Debug.log "mapHeightInWorldPixels" <|
+    timesFloatToInt mapHeightPx resolution
 
 
 getViewportTopLeftWorldPixel : Model -> Int -> Float -> WorldMapPixelPoint
@@ -117,8 +117,8 @@ getViewportTopLeftWorldPixel model zoom resolution =
     let
         -- this is correct
         mapCenter =
-            Debug.log "mapCenterWorldPixel" <|
-                latLngToWorldPixelPoint zoom model.latLng
+            -- Debug.log "mapCenterWorldPixel" <|
+            latLngToWorldPixelPoint zoom model.latLng
     in
         -- but this doesn't take into account resolution
         -- { x = (timesFloatToInt mapCenter.x resolution) - ((timesFloatToInt model.mapWidthPx resolution) // 2)
@@ -147,12 +147,11 @@ getViewportBottomRightWorldPixel model zoom resolution =
 worldPixelPointToViewportPoint : WorldMapPixelPoint -> Model -> Int -> Float -> Point2DInt
 worldPixelPointToViewportPoint worldPixelPoint model zoom resolution =
     let
-        _ =
-            Debug.log "worldPixelPoint B" worldPixelPoint
-
+        -- _ =
+        -- Debug.log "worldPixelPoint B" worldPixelPoint
         viewportTopLeftWorldPixel =
-            Debug.log "viewportTopLeftWorldPixel B" <|
-                getViewportTopLeftWorldPixel model zoom resolution
+            -- Debug.log "viewportTopLeftWorldPixel B" <|
+            getViewportTopLeftWorldPixel model zoom resolution
 
         vector =
             { x = worldPixelPoint.x - viewportTopLeftWorldPixel.x
@@ -173,15 +172,14 @@ zoomAtCursor model zoomIn =
     case model.maybeMouseOver of
         Just mouseOverState ->
             let
-                _ =
-                    Debug.log "model" model
-
+                -- _ =
+                -- Debug.log "model" model
                 zoomDelta =
-                    Debug.log "zoomDelta" <|
-                        if zoomIn then
-                            1
-                        else
-                            -1
+                    -- Debug.log "zoomDelta" <|
+                    if zoomIn then
+                        1
+                    else
+                        -1
 
                 -- VectorMath.scalarMultiply viewportCenterOffset -1
                 -- (2 ^ zoomDelta)
@@ -194,21 +192,21 @@ zoomAtCursor model zoomIn =
                 if newZoom /= model.zoom then
                     let
                         viewportCenterOffset =
-                            Debug.log "viewportcenteroffset" <|
-                                getViewportCenterOffset model mouseOverState.position
+                            -- Debug.log "viewportcenteroffset" <|
+                            getViewportCenterOffset model mouseOverState.position
 
                         panVector =
                             -- To be honest I don't know why the math is different for zooming in vs zooming out
                             -- First I got zoom out working, then I hacked around at things until zoom in
                             -- worked, and now they both work!
-                            Debug.log "panVector" <|
-                                if zoomIn then
-                                    VectorMath.negate viewportCenterOffset
-                                else
-                                    VectorMath.scalarMultiply viewportCenterOffset (2 ^ zoomDelta)
+                            -- Debug.log "panVector" <|
+                            if zoomIn then
+                                VectorMath.negate viewportCenterOffset
+                            else
+                                VectorMath.scalarMultiply viewportCenterOffset (2 ^ zoomDelta)
                     in
-                        Debug.log "model3" <|
-                            panByPixels newModel panVector
+                        -- Debug.log "model3" <|
+                        panByPixels newModel panVector
                 else
                     model
 
@@ -278,3 +276,15 @@ latLngToViewportPoint model latLng =
             latLngToWorldPixelPoint model.zoom latLng
     in
         worldPixelPointToViewportPoint worldPixelPoint model model.zoom 1.0
+
+
+viewportRectangle : Model -> RectangleInt
+viewportRectangle model =
+    { topLeft = { x = 0, y = 0 }
+    , bottomRight = { x = model.mapWidthPx, y = model.mapHeightPx }
+    }
+
+
+isInViewport : Model -> Point2DInt -> Bool
+isInViewport model position =
+    isIn (viewportRectangle model) position

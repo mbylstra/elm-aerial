@@ -43,10 +43,9 @@ type Msg parentMsg
       -- yes
     | MouseEnter Mouse.Position
       -- yes
-    | MouseLeave
-      -- yes
     | MouseClickEvent Mouse.Position
       -- definitely
+    | MouseLeave Mouse.Position
     | MouseWheel MouseWheelEvent
     | ParentMsg parentMsg
 

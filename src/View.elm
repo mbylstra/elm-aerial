@@ -68,24 +68,26 @@ mapViewportView model config =
         -- if dragging, then get the drag offset and apply that to all images
         -- using translate2D, and use withDefault to set the offset to { x = 0, y = 0}
     in
-        div [ class "aerial-viewport" ]
+        div
+            [ class "aerial-viewport"
+            , MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
+            , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
+            , onMouseUp MouseUp
+            , MouseEvents.onMouseLeave (MouseEvents.relPos >> MouseLeave)
+            , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
+            , MouseEvents.onClick (MouseEvents.relPos >> MouseClickEvent)
+            , MouseWheel.onMouseWheel (MouseWheel)
+            , style
+                [ ( "position", "relative" )
+                , ( "overflow", "hidden" )
+                , ( "width", (toString model.mapWidthPx) ++ "px" )
+                , ( "height", (toString model.mapHeightPx) ++ "px" )
+                , ( "background", "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJUlEQVQoU2N88eLFfwY0ICEhwYguxjgUFKI7GsTH5m4M3w1ChQCnziae7MntdQAAAABJRU5ErkJggg==) repeat" )
+                ]
+            ]
             [ Html.Keyed.node "div"
                 [ class "tile-layer"
-                , MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
-                , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
-                , onMouseUp MouseUp
-                , onMouseLeave MouseLeave
-                , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
-                , MouseEvents.onClick (MouseEvents.relPos >> MouseClickEvent)
-                , MouseWheel.onMouseWheel (MouseWheel)
                   -- , on "mousemove" (DOM.target DOM.offsetWidth |> Json.map MouseMoved)
-                , style
-                    [ ( "position", "relative" )
-                    , ( "overflow", "hidden" )
-                    , ( "width", (toString model.mapWidthPx) ++ "px" )
-                    , ( "height", (toString model.mapHeightPx) ++ "px" )
-                    , ( "background", "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJUlEQVQoU2N88eLFfwY0ICEhwYguxjgUFKI7GsTH5m4M3w1ChQCnziae7MntdQAAAABJRU5ErkJggg==) repeat" )
-                    ]
                 ]
                 -- Html Float myButton = button [ on "click" (target offsetWidth) ] [ text "Click me!" ]
                 ((List.map (tileView { model = model, offset = tileOffset, z = 10 }) tileViewModels)
