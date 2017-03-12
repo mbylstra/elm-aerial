@@ -51,10 +51,6 @@ type Msg parentMsg
     | ParentMsg parentMsg
 
 
-
--- possibly
--- | CustomMsg customMsg
-
-
-type OutMsg parentMsgType
+type OutMsg selfMsg
     = MouseClick Mouse.Position
+    | SelfMsg selfMsg

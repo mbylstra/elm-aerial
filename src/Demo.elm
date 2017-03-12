@@ -41,8 +41,8 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update action model =
-    case action of
+update msg model =
+    case msg of
         ButtonClicked ->
             let
                 _ =
@@ -56,39 +56,52 @@ update action model =
                 --We *could* just return all messages, but we probably
                 -- only want to return our "public" api messages
                 -- for now let's return them all!
-                ( aerialModel, msg ) =
+                ( aerialModel, maybeOutMsg ) =
                     AerialUpdate.update aerialMsg model.aerialModel
+
+                model2 =
+                    { model | aerialModel = aerialModel }
             in
-                case aerialMsg of
-                    AerialTypes.ParentMsg customMsg ->
-                        -- Just customMsg ->
-                        let
-                            ( newModel, _ ) =
-                                update customMsg model
-                        in
-                            { newModel | aerialModel = aerialModel }
-                                ! []
+                case maybeOutMsg of
+                    Just outMsg ->
+                        case outMsg of
+                            AerialTypes.SelfMsg msg ->
+                                update msg model2
 
-                    AerialTypes.MouseDown position ->
-                        -- this just gives the position, but we can give position + aerialModel
-                        -- to get the latlng
-                        -- then we add it to the list of lat lngs.. pretty easy!
-                        let
-                            latLng =
-                                viewportPointToLatLng model.aerialModel position
+                            AerialTypes.MouseClick position ->
+                                -- this just gives the position, but we can give position + aerialModel
+                                -- to get the latlng
+                                -- then we add it to the list of lat lngs.. pretty easy!
+                                let
+                                    latLng =
+                                        viewportPointToLatLng model2.aerialModel position
 
-                            newMarkers =
-                                model.markers ++ [ latLng ]
-                        in
-                            { model | aerialModel = aerialModel, markers = newMarkers }
-                                ! []
+                                    newMarkers =
+                                        model.markers ++ [ latLng ]
+                                in
+                                    { model2 | aerialModel = aerialModel, markers = newMarkers }
+                                        ! []
 
-                    _ ->
-                        { model | aerialModel = aerialModel }
-                            ! []
+                    Nothing ->
+                        model2 ! []
 
 
 
+-- in
+--     case aerialMsg of
+--         AerialTypes.ParentMsg customMsg ->
+--             -- Just customMsg ->
+--             let
+--                 ( newModel, _ ) =
+--                     update customMsg model
+--             in
+--                 { newModel | aerialModel = aerialModel }
+--                     ! []
+--
+--
+--         _ ->
+--             { model | aerialModel = aerialModel }
+--                 ! []
 -- VIEW
 
 

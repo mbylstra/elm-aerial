@@ -5,7 +5,7 @@ import Types exposing (Msg(..), OutMsg(..), Model)
 import VectorMath exposing (difference)
 
 
-update : Msg parentMsg -> Model -> ( Model, Maybe OutMsg )
+update : Msg parentMsg -> Model -> ( Model, Maybe (OutMsg parentMsg) )
 update msg model =
     case msg of
         UpdateLng lngString ->
@@ -135,7 +135,7 @@ update msg model =
                 -- _ =
                 --     Debug.log "position" position
             in
-                ( model, Nothing )
+                ( model, Just <| MouseClick position )
 
         MouseWheel wheelEvent ->
             let
@@ -156,4 +156,5 @@ update msg model =
 
         ParentMsg parentMsg ->
             -- now whattawe do??
-            ( model, Nothing )
+            -- todo convert to OutMsg
+            ( model, Just (SelfMsg parentMsg) )
