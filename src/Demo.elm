@@ -89,7 +89,8 @@ update msg model =
                         model2 ! []
 
         AddPinPluginMsg addPinPluginMsg ->
-            { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin } ! []
+            -- { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin } ! []
+            model ! []
 
 
 
@@ -132,13 +133,16 @@ markerView =
 view : Model -> Html Msg
 view model =
     let
+        aerialModel =
+            model.aerialModel
+
         -- myButton : Html (AerialTypes.Msg Msg)
         -- myButton =
         --     button [ onClick (AerialTypes.CustomMsg ButtonClicked) ] [ text "Button" ]
         -- unMappedView : AerialTypes.Model -> Html AddPinPlugin.Msg
         unMappedView : Html AddPinPlugin.Msg
         unMappedView =
-            AddPinPlugin.view model.addPinPlugin
+            AddPinPlugin.view model.addPinPlugin aerialModel
 
         -- mappedView : AerialTypes.Model -> Html Msg
         mappedView : Html Msg
@@ -147,9 +151,9 @@ view model =
             Html.map AddPinPluginMsg unMappedView
 
         -- So, we should be able to pass this to Config
-        aerialViewConfig : Html Msg
+        aerialViewConfig : AerialView.Config Msg
         aerialViewConfig =
-            mappedView
+            { pluginLayerView = mappedView }
 
         -- { -- markerView = AddPinPlugin.markerView
         --   -- , markers = model.markers

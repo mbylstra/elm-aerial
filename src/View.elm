@@ -18,13 +18,14 @@ import MouseEventPositions exposing (onMouseMoveGetPosition)
 
 
 type alias Config customMsg =
-    -- { markerView : Html customMsg
-    -- { pluginLayerView :
-    -- Html (Msg customMsg)
-    Html customMsg
+    { pluginLayerView : Html customMsg }
 
 
 
+-- { markerView : Html customMsg
+-- { pluginLayerView :
+-- Html (Msg customMsg)
+-- Html customMsg
 -- Model -> Html (Msg customMsg)
 -- , markers : List LatLng
 -- }
@@ -106,7 +107,7 @@ mapViewportView model config =
                 )
               -- , config.pluginLayerView model
               -- , config.pluginLayerView
-            , Html.map ParentMsg config
+            , Html.map ParentMsg config.pluginLayerView
             ]
 
 

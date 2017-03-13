@@ -5,12 +5,9 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json
-
-
--- import Model as AerialModel exposing (latLngToViewportPoint, viewportPointToLatLng)
--- import Types as AerialTypes
--- import Update as AerialUpdate
-
+import Model as AerialModel exposing (latLngToViewportPoint, viewportPointToLatLng)
+import Types as AerialTypes
+import Update as AerialUpdate
 import VectorMath exposing (Point2DInt)
 
 
@@ -36,8 +33,8 @@ type Msg
 --     | ???
 
 
-update : Msg -> Model -> Model
-update msg model =
+update : Msg -> Model -> AerialTypes.Model -> Model
+update msg model aerialModel =
     case msg of
         -- AerialMsg aerialMsg ->
         --     let
@@ -85,18 +82,19 @@ update msg model =
 -- view : Model -> AerialTypes.Model -> Html Msg
 
 
-view : Model -> Html Msg
-view model =
+view : Model -> AerialTypes.Model -> Html Msg
+view model aerialModel =
     let
         -- _ =
         --     Debug.log "" True
         markerWrappers =
             model.markers
-                -- |> List.map (latLngToViewportPoint aerialModel)
+                |> List.map (latLngToViewportPoint aerialModel)
+                -- |>
+                --     -- Until we figure out how to pass the model along
+                --     List.map (always { x = 40, y = 40 })
                 |>
-                    -- Until we figure out how to pass the model along
-                    List.map (always { x = 40, y = 40 })
-                |> List.map (markerWrapperView markerView)
+                    List.map (markerWrapperView markerView)
     in
         div
             [ class "marker-layer" ]
