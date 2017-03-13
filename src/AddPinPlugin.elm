@@ -33,8 +33,8 @@ type Msg
 --     | ???
 
 
-update : Msg -> Model -> AerialTypes.Model -> Model
-update msg model aerialModel =
+update : Msg -> Model -> Model
+update msg model =
     case msg of
         -- AerialMsg aerialMsg ->
         --     let

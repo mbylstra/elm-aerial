@@ -89,11 +89,11 @@ update msg model =
                         model2 ! []
 
         AddPinPluginMsg addPinPluginMsg ->
-            -- { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin } ! []
-            model ! []
+            { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin } ! []
 
 
 
+-- model ! []
 -- in
 --     case aerialMsg of
 --         AerialTypes.ParentMsg customMsg ->
