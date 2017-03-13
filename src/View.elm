@@ -1,6 +1,7 @@
 module View exposing (..)
 
-import Geo exposing (LatLng)
+-- import Geo exposing (LatLng)
+
 import Html exposing (Html, div, img, input, text)
 import Html.Attributes exposing (class, draggable, src, style, type_, value)
 import Html.Events exposing (onInput, onMouseLeave, onMouseUp)
@@ -17,9 +18,16 @@ import MouseEventPositions exposing (onMouseMoveGetPosition)
 
 
 type alias Config customMsg =
-    { markerView : Html customMsg
-    , markers : List LatLng
-    }
+    -- { markerView : Html customMsg
+    -- { pluginLayerView :
+    -- Html (Msg customMsg)
+    Html customMsg
+
+
+
+-- Model -> Html (Msg customMsg)
+-- , markers : List LatLng
+-- }
 
 
 view : Config customMsg -> Model -> Html (Msg customMsg)
@@ -96,7 +104,9 @@ mapViewportView model config =
                     ++ (List.map (tileView { model = model, offset = tileOffset, z = 2 }) lowResTileViewModels)
                     ++ (List.map (tileView { model = model, offset = tileOffset, z = 1 }) lowResTileViewModels2)
                 )
-            , markerLayer model config
+              -- , config.pluginLayerView model
+              -- , config.pluginLayerView
+            , Html.map ParentMsg config
             ]
 
 
@@ -148,31 +158,6 @@ tileNumberToHtmlKey tile =
     , tile.zoom |> toString
     ]
         |> String.join "-"
-
-
-markerLayer : Model -> Config customMsg -> Html (Msg customMsg)
-markerLayer model config =
-    let
-        markerWrappers =
-            config.markers
-                |> List.map (latLngToViewportPoint model)
-                |> List.map (markerWrapperView config.markerView)
-    in
-        div
-            [ class "marker-layer" ]
-            markerWrappers
-
-
-markerWrapperView : Html customMsg -> Point2DInt -> Html (Msg customMsg)
-markerWrapperView markerView viewportPosition =
-    div
-        [ style
-            [ ( "position", "absolute" )
-            , ( "left", toString viewportPosition.x ++ "px" )
-            , ( "top", toString viewportPosition.y ++ "px" )
-            ]
-        ]
-        [ Html.map ParentMsg <| markerView ]
 
 
 
