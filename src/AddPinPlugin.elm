@@ -5,10 +5,10 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json
-import Model as AerialModel exposing (latLngToViewportPoint, viewportPointToLatLng)
-import Types as AerialTypes
 
 
+-- import Model as AerialModel exposing (latLngToViewportPoint, viewportPointToLatLng)
+-- import Types as AerialTypes
 -- import Update as AerialUpdate
 
 import VectorMath exposing (Point2DInt)
@@ -36,7 +36,7 @@ type Msg
 --     | ???
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> Model
 update msg model =
     case msg of
         -- AerialMsg aerialMsg ->
@@ -78,7 +78,7 @@ update msg model =
                 _ =
                     Debug.log "AddPinPlugin MouseClick" True
             in
-                model ! []
+                model
 
 
 
@@ -88,17 +88,20 @@ update msg model =
 view : Model -> Html Msg
 view model =
     let
-        _ =
-            Debug.log "" True
-
-        -- markerWrappers =
-        --     model.markers
-        --         |> List.map (latLngToViewportPoint aerialModel)
-        --         |> List.map (markerWrapperView markerView)
+        -- _ =
+        --     Debug.log "" True
+        markerWrappers =
+            model.markers
+                -- |> List.map (latLngToViewportPoint aerialModel)
+                |>
+                    -- Until we figure out how to pass the model along
+                    List.map (always { x = 40, y = 40 })
+                |> List.map (markerWrapperView markerView)
     in
         div
             [ class "marker-layer" ]
-            []
+            -- []
+            markerWrappers
 
 
 
@@ -114,7 +117,6 @@ markerWrapperView markerView viewportPosition =
             , ( "top", toString viewportPosition.y ++ "px" )
             ]
         ]
-        -- [ Html.map ParentMsg <| markerView ]
         [ markerView ]
 
 

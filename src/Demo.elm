@@ -89,8 +89,7 @@ update msg model =
                         model2 ! []
 
         AddPinPluginMsg addPinPluginMsg ->
-            -- TODO: actually update the model
-            model ! []
+            { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin } ! []
 
 
 
