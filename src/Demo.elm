@@ -2,8 +2,13 @@ module Demo exposing (Model, Msg, init, update, view)
 
 -- import Geo exposing (LatLng)
 
+import AddPinPlugin exposing (Msg(AerialOutMsg))
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Model as AerialModel exposing (viewportPointToLatLng)
+import Types as AerialTypes
+import Update as AerialUpdate
+import View as AerialView
 
 
 -- import Html.Events exposing (..)
@@ -58,24 +63,31 @@ update msg model =
                 --We *could* just return all messages, but we probably
                 -- only want to return our "public" api messages
                 -- for now let's return them all!
-                ( aerialModel, maybeOutMsg ) =
+                ( aerialModel, maybeAerialOutMsg ) =
                     AerialUpdate.update aerialMsg model.aerialModel
 
                 model2 =
                     { model | aerialModel = aerialModel }
             in
-                case maybeOutMsg of
-                    Just outMsg ->
-                        case outMsg of
-                            AerialTypes.SelfMsg msg ->
-                                update msg model2
+                case maybeAerialOutMsg of
+                    Just aerialOutMsg ->
+                        let
+                            addPinPluginMsg =
+                                AerialOutMsg aerialOutMsg
 
-                            AerialTypes.MouseClick position ->
-                                -- this just gives the position, but we can give position + aerialModel
-                                -- to get the latlng
-                                -- then we add it to the list of lat lngs.. pretty easy!
-                                model ! []
+                            -- newAddPinPlugin = AddPinPlugin.update
+                        in
+                            { model2 | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin model.aerialModel } ! []
 
+                    -- case aerialOutMsg of
+                    --     AerialTypes.SelfMsg msg ->
+                    --         update msg model2
+                    --
+                    --     AerialTypes.MouseClick position ->
+                    --         -- this just gives the position, but we can give position + aerialModel
+                    --         -- to get the latlng
+                    --         -- then we add it to the list of lat lngs.. pretty easy!
+                    --         model ! []
                     -- let
                     --     latLng =
                     --         viewportPointToLatLng model2.aerialModel position
@@ -89,7 +101,7 @@ update msg model =
                         model2 ! []
 
         AddPinPluginMsg addPinPluginMsg ->
-            { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin } ! []
+            { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin model.aerialModel } ! []
 
 
 
@@ -110,24 +122,6 @@ update msg model =
 --             { model | aerialModel = aerialModel }
 --                 ! []
 -- VIEW
-
-
-markerView : Html Msg
-markerView =
-    div
-        [ style
-            [ ( "width", "20px" )
-            , ( "height", "20px" )
-            , ( "position", "absolute" )
-            , ( "top", "-10px" )
-            , ( "left", "-10px" )
-            , ( "border", "1px solid black" )
-            , ( "border-radius", "10px" )
-            , ( "background-color", "rgba(0,0,0,0.5)" )
-            , ( "z-index", "10" )
-            ]
-        ]
-        []
 
 
 view : Model -> Html Msg

@@ -26,47 +26,49 @@ init =
 
 
 type Msg
-    = MouseClick
+    = AerialOutMsg (AerialTypes.OutMsg Msg)
+    | MouseClick
 
 
 
 --     | ???
 
 
-update : Msg -> Model -> Model
-update msg model =
+update : Msg -> Model -> AerialTypes.Model -> Model
+update msg model aerialModel =
     case msg of
-        -- AerialMsg aerialMsg ->
-        --     let
-        --         -- Here we might get an AerialMsg or one of our own messages.
-        --         --We *could* just return all messages, but we probably
-        --         -- only want to return our "public" api messages
-        --         -- for now let's return them all!
-        --         ( aerialModel, maybeOutMsg ) =
-        --             AerialUpdate.update aerialMsg model.aerialModel
-        --
-        --         model2 =
-        --             { model | aerialModel = aerialModel }
-        --     in
-        --         case maybeOutMsg of
-        --             Just outMsg ->
-        --                 case outMsg of
-        --                     AerialTypes.SelfMsg msg ->
-        --                         update msg model2
-        --
-        --                     AerialTypes.MouseClick position ->
-        --                         -- this just gives the position, but we can give position + aerialModel
-        --                         -- to get the latlng
-        --                         -- then we add it to the list of lat lngs.. pretty easy!
-        --                         let
-        --                             latLng =
-        --                                 viewportPointToLatLng model2.aerialModel position
-        --
-        --                             newMarkers =
-        --                                 model.markers ++ [ latLng ]
-        --                         in
-        --                             { model2 | aerialModel = aerialModel, markers = newMarkers }
-        --                                 ! []
+        AerialOutMsg aerialOutMsg ->
+            -- AerialMsg aerialMsg ->
+            --     let
+            --         -- Here we might get an AerialMsg or one of our own messages.
+            --         --We *could* just return all messages, but we probably
+            --         -- only want to return our "public" api messages
+            --         -- for now let's return them all!
+            --         ( aerialModel, maybeOutMsg ) =
+            --             AerialUpdate.update aerialMsg model.aerialModel
+            --
+            --         model2 =
+            --             { model | aerialModel = aerialModel }
+            --     in
+            --         case maybeOutMsg of
+            --             Just outMsg ->
+            case aerialOutMsg of
+                AerialTypes.SelfMsg msg ->
+                    update msg model
+
+                AerialTypes.MouseClick position ->
+                    -- this just gives the position, but we can give position + aerialModel
+                    -- to get the latlng
+                    -- then we add it to the list of lat lngs.. pretty easy!
+                    let
+                        latLng =
+                            viewportPointToLatLng aerialModel position
+
+                        newMarkers =
+                            model.markers ++ [ latLng ]
+                    in
+                        { model | markers = newMarkers }
+
         --
         --             Nothing ->
         --                 model2 ! []
