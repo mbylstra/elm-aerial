@@ -2,15 +2,19 @@ module Demo exposing (Model, Msg, init, update, view)
 
 -- import Geo exposing (LatLng)
 
-import AddPinPlugin exposing (Msg(AerialOutMsg))
+import AddPinPlugin
 import Html exposing (..)
-import Html.Attributes exposing (..)
+
+
+-- import Html.Attributes exposing (..)
+
 import Model as AerialModel exposing (viewportPointToLatLng)
 import Types as AerialTypes
 import Update as AerialUpdate
 import View as AerialView
 
 
+-- import Mouse
 -- import Html.Events exposing (..)
 
 import Model as AerialModel exposing (viewportPointToLatLng)
@@ -33,16 +37,24 @@ type alias Model =
     }
 
 
-init : ( Model, Cmd Msg )
+setAerialModel : AerialTypes.Model -> Model -> Model
+setAerialModel aerialModel model =
+    { model | aerialModel = aerialModel }
+
+
+setAddPinPlugin : AddPinPlugin.Model -> Model -> Model
+setAddPinPlugin addPinPlugin model =
+    { model | addPinPlugin = addPinPlugin }
+
+
+init : Model
 init =
     { prop1 = "hello"
     , prop2 = 2
     , aerialModel =
         AerialModel.init
-        -- , markers = [ LatLng -37.814 144.96332, LatLng -33.86785 151.20732 ]
     , addPinPlugin = AddPinPlugin.init
     }
-        ! []
 
 
 
@@ -54,74 +66,40 @@ type Msg
     | AddPinPluginMsg AddPinPlugin.Msg
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> Model
 update msg model =
     case msg of
         AerialMsg aerialMsg ->
-            let
-                -- Here we might get an AerialMsg or one of our own messages.
-                --We *could* just return all messages, but we probably
-                -- only want to return our "public" api messages
-                -- for now let's return them all!
-                ( aerialModel, maybeAerialOutMsg ) =
-                    AerialUpdate.update aerialMsg model.aerialModel
-
-                model2 =
-                    { model | aerialModel = aerialModel }
-            in
-                case maybeAerialOutMsg of
-                    Just aerialOutMsg ->
-                        let
-                            addPinPluginMsg =
-                                AerialOutMsg aerialOutMsg
-
-                            -- newAddPinPlugin = AddPinPlugin.update
-                        in
-                            { model2 | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin model.aerialModel } ! []
-
-                    -- case aerialOutMsg of
-                    --     AerialTypes.SelfMsg msg ->
-                    --         update msg model2
-                    --
-                    --     AerialTypes.MouseClick position ->
-                    --         -- this just gives the position, but we can give position + aerialModel
-                    --         -- to get the latlng
-                    --         -- then we add it to the list of lat lngs.. pretty easy!
-                    --         model ! []
-                    -- let
-                    --     latLng =
-                    --         viewportPointToLatLng model2.aerialModel position
-                    --
-                    --     newMarkers =
-                    --         model.markers ++ [ latLng ]
-                    -- in
-                    --     { model2 | aerialModel = aerialModel, markers = newMarkers }
-                    --         ! []
-                    Nothing ->
-                        model2 ! []
+            AerialUpdate.update aerialMsg model.aerialModel
+                |> \( aerialModel, aerialReturn ) ->
+                    model
+                        |> setAerialModel aerialModel
+                        |> handleAerialReturn aerialReturn
 
         AddPinPluginMsg addPinPluginMsg ->
-            { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin model.aerialModel } ! []
+            { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin model.aerialModel }
 
 
+handleAerialReturn : AerialTypes.Return Msg -> Model -> Model
+handleAerialReturn return model =
+    case return of
+        AerialTypes.OutMsg outMsg ->
+            model
+                |> updateWithAerialOutMsg outMsg
+                |> setAddPinPlugin (AddPinPlugin.updateWithAerialOutMsg outMsg model.aerialModel model.addPinPlugin)
 
--- model ! []
--- in
---     case aerialMsg of
---         AerialTypes.ParentMsg customMsg ->
---             -- Just customMsg ->
---             let
---                 ( newModel, _ ) =
---                     update customMsg model
---             in
---                 { newModel | aerialModel = aerialModel }
---                     ! []
---
---
---         _ ->
---             { model | aerialModel = aerialModel }
---                 ! []
--- VIEW
+        AerialTypes.SelfMsg msg ->
+            update msg model
+
+        AerialTypes.ReturnNothing ->
+            model
+
+
+updateWithAerialOutMsg : AerialTypes.OutMsg -> Model -> Model
+updateWithAerialOutMsg outMsg model =
+    case outMsg of
+        AerialTypes.MouseClick position ->
+            model
 
 
 view : Model -> Html Msg

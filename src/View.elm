@@ -86,7 +86,7 @@ mapViewportView model config =
             , onMouseUp MouseUp
             , MouseEvents.onMouseLeave (MouseEvents.relPos >> MouseLeave)
             , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
-            , MouseEvents.onClick (MouseEvents.relPos >> MouseClickEvent)
+            , MouseEvents.onClick (MouseEvents.relPos >> PrivateMouseClick)
             , MouseWheel.onMouseWheel (MouseWheel)
             , style
                 [ ( "position", "relative" )

@@ -6,9 +6,10 @@ import Demo exposing (Model, Msg, view, update, init)
 
 main : Program Never Model Msg
 main =
-    Html.program
+    Html.beginnerProgram
         { view = view
-        , update = update
-        , subscriptions = \_ -> Sub.none
-        , init = init
+        , update =
+            update
+            -- , subscriptions = \_ -> Sub.none
+        , model = init
         }

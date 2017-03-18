@@ -1,11 +1,11 @@
 module Update exposing (..)
 
 import Model exposing (cleanLat, cleanLatLng, cleanLng, getViewportCenter, isInViewport, setZoom, viewportPointToLatLng, zoomAtCursor)
-import Types exposing (Msg(..), OutMsg(..), Model)
+import Types exposing (Model, Msg(..), Return(OutMsg), OutMsg(..), Return, Return(ReturnNothing), Return(SelfMsg))
 import VectorMath exposing (difference)
 
 
-update : Msg parentMsg -> Model -> ( Model, Maybe (OutMsg parentMsg) )
+update : Msg parentMsg -> Model -> ( Model, Return parentMsg )
 update msg model =
     case msg of
         UpdateLng lngString ->
@@ -22,7 +22,7 @@ update msg model =
                 newLatLng =
                     { latLng | lng = newLng }
             in
-                ( { model | latLng = newLatLng }, Nothing )
+                ( { model | latLng = newLatLng }, ReturnNothing )
 
         UpdateLat latString ->
             let
@@ -38,7 +38,7 @@ update msg model =
                 newLatLng =
                     { latLng | lat = newLat }
             in
-                ( { model | latLng = newLatLng }, Nothing )
+                ( { model | latLng = newLatLng }, ReturnNothing )
 
         UpdateZoom zoomString ->
             let
@@ -48,7 +48,7 @@ update msg model =
                         |> Result.map (setZoom model)
                         |> Result.withDefault model
             in
-                ( newModel, Nothing )
+                ( newModel, ReturnNothing )
 
         MouseDown position ->
             let
@@ -57,7 +57,7 @@ update msg model =
                         |> Maybe.map
                             (\mouseOverState -> { mouseOverState | down = Just { startPosition = position } })
             in
-                ( { model | maybeMouseOver = maybeMouseOver }, Nothing )
+                ( { model | maybeMouseOver = maybeMouseOver }, ReturnNothing )
 
         MouseUp ->
             let
@@ -100,7 +100,7 @@ update msg model =
                                     -- useful we should do in this case, so do nothing.
                                     model
             in
-                ( newModel, Nothing )
+                ( newModel, ReturnNothing )
 
         MouseMove position ->
             -- the annoying thing is that we need to preserver the mouseDown state
@@ -111,25 +111,25 @@ update msg model =
                         |> Maybe.map
                             (\mouseOverState -> { mouseOverState | position = position })
             in
-                ( { model | maybeMouseOver = maybeMouseOver }, Nothing )
+                ( { model | maybeMouseOver = maybeMouseOver }, ReturnNothing )
 
         MouseEnter position ->
-            ( { model | maybeMouseOver = Just { position = position, down = Nothing } }, Nothing )
+            ( { model | maybeMouseOver = Just { position = position, down = Nothing } }, ReturnNothing )
 
         MouseLeave position ->
             if (Debug.log "isInViewport" <| isInViewport model position) then
-                ( model, Nothing )
+                ( model, ReturnNothing )
             else
-                ( { model | maybeMouseOver = Nothing }, Nothing )
+                ( { model | maybeMouseOver = Nothing }, ReturnNothing )
 
-        MouseClickEvent position ->
+        PrivateMouseClick position ->
             -- let
             --     _ =
             --         Debug.log "latlng" (viewportPointToLatLng model position)
             -- _ =
             --     Debug.log "position" position
             -- in
-            ( model, Just <| MouseClick position )
+            ( model, OutMsg <| MouseClick position )
 
         MouseWheel wheelEvent ->
             let
@@ -146,9 +146,7 @@ update msg model =
                         Nothing ->
                             model
             in
-                ( newModel, Nothing )
+                ( newModel, ReturnNothing )
 
         ParentMsg parentMsg ->
-            -- now whattawe do??
-            -- todo convert to OutMsg
-            ( model, Just (SelfMsg parentMsg) )
+            ( model, SelfMsg parentMsg )
