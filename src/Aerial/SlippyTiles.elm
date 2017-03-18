@@ -1,7 +1,7 @@
-module SlippyTiles exposing (..)
+module Aerial.SlippyTiles exposing (..)
 
-import Geo exposing (LatLng)
-import SphericalMercator exposing (projectLatToMapWidth, projectLngToMapWidth, unprojectLatFromMapWidth, unprojectLngFromMapWidth)
+import Aerial.Geo exposing (LatLng)
+import Aerial.SphericalMercator exposing (projectLatToMapWidth, projectLngToMapWidth, unprojectLatFromMapWidth, unprojectLngFromMapWidth)
 
 
 tileSize : Int

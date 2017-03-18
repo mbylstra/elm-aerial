@@ -9318,30 +9318,30 @@ var _elm_lang$mouse$Mouse$subMap = F2(
 			});
 	});
 _elm_lang$core$Native_Platform.effectManagers['Mouse'] = {pkg: 'elm-lang/mouse', init: _elm_lang$mouse$Mouse$init, onEffects: _elm_lang$mouse$Mouse$onEffects, onSelfMsg: _elm_lang$mouse$Mouse$onSelfMsg, tag: 'sub', subMap: _elm_lang$mouse$Mouse$subMap};
-var _user$project$Geo$LatLng = F2(
+var _user$project$Aerial_Geo$LatLng = F2(
 	function (a, b) {
 		return {lat: a, lng: b};
 	});
-var _user$project$Geo$Point2DFloat = F2(
+var _user$project$Aerial_Geo$Point2DFloat = F2(
 	function (a, b) {
 		return {x: a, y: b};
 	});
-var _user$project$Util$fmod = F2(
+var _user$project$Aerial_Util$fmod = F2(
 	function (a, b) {
 		return a - (b * _elm_lang$core$Basics$toFloat(
 			_elm_lang$core$Basics$floor(a / b)));
 	});
-var _user$project$Util$toDegrees = function (radians) {
+var _user$project$Aerial_Util$toDegrees = function (radians) {
 	return (radians * 180.0) / _elm_lang$core$Basics$pi;
 };
-var _user$project$Util$toRadians = _elm_lang$core$Basics$degrees;
-var _user$project$Util$circumference = function (r) {
+var _user$project$Aerial_Util$toRadians = _elm_lang$core$Basics$degrees;
+var _user$project$Aerial_Util$circumference = function (r) {
 	return (2 * _elm_lang$core$Basics$pi) * r;
 };
-var _user$project$Util$ln = function (x) {
+var _user$project$Aerial_Util$ln = function (x) {
 	return A2(_elm_lang$core$Basics$logBase, _elm_lang$core$Basics$e, x);
 };
-var _user$project$Util$cartesianProduct = F2(
+var _user$project$Aerial_Util$cartesianProduct = F2(
 	function (xs, ys) {
 		return A2(
 			_elm_lang$core$List$concatMap,
@@ -9355,54 +9355,54 @@ var _user$project$Util$cartesianProduct = F2(
 			},
 			xs);
 	});
-var _user$project$SphericalMercator$latFromProjectedRadians = function (y) {
+var _user$project$Aerial_SphericalMercator$latFromProjectedRadians = function (y) {
 	var latRadians = (2 * _elm_lang$core$Basics$atan(
 		Math.pow(_elm_lang$core$Basics$e, y))) - (_elm_lang$core$Basics$pi / 2);
-	return _user$project$Util$toDegrees(latRadians);
+	return _user$project$Aerial_Util$toDegrees(latRadians);
 };
-var _user$project$SphericalMercator$unprojectLatFromMapWidth = F2(
+var _user$project$Aerial_SphericalMercator$unprojectLatFromMapWidth = F2(
 	function (width, y) {
-		return _user$project$SphericalMercator$latFromProjectedRadians((y / (width / 2)) * _elm_lang$core$Basics$pi);
+		return _user$project$Aerial_SphericalMercator$latFromProjectedRadians((y / (width / 2)) * _elm_lang$core$Basics$pi);
 	});
-var _user$project$SphericalMercator$lngFromProjectedRadians = function (x) {
-	return _user$project$Util$toDegrees(x);
+var _user$project$Aerial_SphericalMercator$lngFromProjectedRadians = function (x) {
+	return _user$project$Aerial_Util$toDegrees(x);
 };
-var _user$project$SphericalMercator$unprojectLngFromMapWidth = F2(
+var _user$project$Aerial_SphericalMercator$unprojectLngFromMapWidth = F2(
 	function (width, x) {
 		var xRadians = (x / (width / 2)) * _elm_lang$core$Basics$pi;
-		return _user$project$SphericalMercator$lngFromProjectedRadians(xRadians);
+		return _user$project$Aerial_SphericalMercator$lngFromProjectedRadians(xRadians);
 	});
-var _user$project$SphericalMercator$latToProjectedRadians = function (lat) {
-	var latRadians = _user$project$Util$toRadians(lat);
-	return _user$project$Util$ln(
+var _user$project$Aerial_SphericalMercator$latToProjectedRadians = function (lat) {
+	var latRadians = _user$project$Aerial_Util$toRadians(lat);
+	return _user$project$Aerial_Util$ln(
 		_elm_lang$core$Basics$tan((_elm_lang$core$Basics$pi / 4) + (latRadians / 2)));
 };
-var _user$project$SphericalMercator$projectLatToMapWidth = F2(
+var _user$project$Aerial_SphericalMercator$projectLatToMapWidth = F2(
 	function (lat, width) {
-		return (_user$project$SphericalMercator$latToProjectedRadians(lat) / _elm_lang$core$Basics$pi) * (width / 2);
+		return (_user$project$Aerial_SphericalMercator$latToProjectedRadians(lat) / _elm_lang$core$Basics$pi) * (width / 2);
 	});
-var _user$project$SphericalMercator$lngToProjectedRadians = function (lng) {
-	return _user$project$Util$toRadians(lng);
+var _user$project$Aerial_SphericalMercator$lngToProjectedRadians = function (lng) {
+	return _user$project$Aerial_Util$toRadians(lng);
 };
-var _user$project$SphericalMercator$projectLngToMapWidth = F2(
+var _user$project$Aerial_SphericalMercator$projectLngToMapWidth = F2(
 	function (lng, width) {
-		return (_user$project$SphericalMercator$lngToProjectedRadians(lng) / _elm_lang$core$Basics$pi) * (width / 2);
+		return (_user$project$Aerial_SphericalMercator$lngToProjectedRadians(lng) / _elm_lang$core$Basics$pi) * (width / 2);
 	});
-var _user$project$SphericalMercator$earthRadiusMeters = 6378137;
-var _user$project$SphericalMercator$earthCircumferenceMeters = _user$project$Util$circumference(_user$project$SphericalMercator$earthRadiusMeters);
-var _user$project$SphericalMercator$projectLngToMeters = function (lng) {
-	return A2(_user$project$SphericalMercator$projectLngToMapWidth, lng, _user$project$SphericalMercator$earthCircumferenceMeters);
+var _user$project$Aerial_SphericalMercator$earthRadiusMeters = 6378137;
+var _user$project$Aerial_SphericalMercator$earthCircumferenceMeters = _user$project$Aerial_Util$circumference(_user$project$Aerial_SphericalMercator$earthRadiusMeters);
+var _user$project$Aerial_SphericalMercator$projectLngToMeters = function (lng) {
+	return A2(_user$project$Aerial_SphericalMercator$projectLngToMapWidth, lng, _user$project$Aerial_SphericalMercator$earthCircumferenceMeters);
 };
-var _user$project$SphericalMercator$projectLatToMeters = function (lat) {
-	return A2(_user$project$SphericalMercator$projectLatToMapWidth, lat, _user$project$SphericalMercator$earthCircumferenceMeters);
+var _user$project$Aerial_SphericalMercator$projectLatToMeters = function (lat) {
+	return A2(_user$project$Aerial_SphericalMercator$projectLatToMapWidth, lat, _user$project$Aerial_SphericalMercator$earthCircumferenceMeters);
 };
-var _user$project$SphericalMercator$unprojectLngFromMeters = function (x) {
-	return A2(_user$project$SphericalMercator$unprojectLngFromMapWidth, x, _user$project$SphericalMercator$earthCircumferenceMeters);
+var _user$project$Aerial_SphericalMercator$unprojectLngFromMeters = function (x) {
+	return A2(_user$project$Aerial_SphericalMercator$unprojectLngFromMapWidth, x, _user$project$Aerial_SphericalMercator$earthCircumferenceMeters);
 };
-var _user$project$SphericalMercator$unprojectLatFromMeters = function (y) {
-	return A2(_user$project$SphericalMercator$unprojectLatFromMapWidth, y, _user$project$SphericalMercator$earthCircumferenceMeters);
+var _user$project$Aerial_SphericalMercator$unprojectLatFromMeters = function (y) {
+	return A2(_user$project$Aerial_SphericalMercator$unprojectLatFromMapWidth, y, _user$project$Aerial_SphericalMercator$earthCircumferenceMeters);
 };
-var _user$project$SlippyTiles$slippyTileUrl = F2(
+var _user$project$Aerial_SlippyTiles$slippyTileUrl = F2(
 	function (subdomain, _p0) {
 		var _p1 = _p0;
 		var _p2 = {
@@ -9437,296 +9437,300 @@ var _user$project$SlippyTiles$slippyTileUrl = F2(
 									'/',
 									A2(_elm_lang$core$Basics_ops['++'], yS, '.png'))))))));
 	});
-var _user$project$SlippyTiles$tileSize = 256;
-var _user$project$SlippyTiles$getTileTopLeftWorldPixelPoint = function (slippyTileNumber) {
-	return {x: slippyTileNumber.x * _user$project$SlippyTiles$tileSize, y: slippyTileNumber.y * _user$project$SlippyTiles$tileSize, zoom: slippyTileNumber.zoom};
+var _user$project$Aerial_SlippyTiles$tileSize = 256;
+var _user$project$Aerial_SlippyTiles$getTileTopLeftWorldPixelPoint = function (slippyTileNumber) {
+	return {x: slippyTileNumber.x * _user$project$Aerial_SlippyTiles$tileSize, y: slippyTileNumber.y * _user$project$Aerial_SlippyTiles$tileSize, zoom: slippyTileNumber.zoom};
 };
-var _user$project$SlippyTiles$worldPixelPointToSlippyTileNumber = function (_p3) {
+var _user$project$Aerial_SlippyTiles$worldPixelPointToSlippyTileNumber = function (_p3) {
 	var _p4 = _p3;
-	return {x: (_p4.x / _user$project$SlippyTiles$tileSize) | 0, y: (_p4.y / _user$project$SlippyTiles$tileSize) | 0, zoom: _p4.zoom};
+	return {x: (_p4.x / _user$project$Aerial_SlippyTiles$tileSize) | 0, y: (_p4.y / _user$project$Aerial_SlippyTiles$tileSize) | 0, zoom: _p4.zoom};
 };
-var _user$project$SlippyTiles$getMapWidth = function (zoom) {
+var _user$project$Aerial_SlippyTiles$getMapWidth = function (zoom) {
 	return _elm_lang$core$Basics$toFloat(
-		Math.pow(2, zoom) * _user$project$SlippyTiles$tileSize);
+		Math.pow(2, zoom) * _user$project$Aerial_SlippyTiles$tileSize);
 };
-var _user$project$SlippyTiles$latLngToWorldPixelPoint = F2(
+var _user$project$Aerial_SlippyTiles$latLngToWorldPixelPoint = F2(
 	function (zoom, _p5) {
 		var _p6 = _p5;
-		var mapWidth = _user$project$SlippyTiles$getMapWidth(zoom);
+		var mapWidth = _user$project$Aerial_SlippyTiles$getMapWidth(zoom);
 		var halfMapWidth = mapWidth / 2;
 		var x = _elm_lang$core$Basics$floor(
-			A2(_user$project$SphericalMercator$projectLngToMapWidth, _p6.lng, mapWidth) + halfMapWidth);
+			A2(_user$project$Aerial_SphericalMercator$projectLngToMapWidth, _p6.lng, mapWidth) + halfMapWidth);
 		var y = _elm_lang$core$Basics$floor(
-			(0 - A2(_user$project$SphericalMercator$projectLatToMapWidth, _p6.lat, mapWidth)) + halfMapWidth);
+			(0 - A2(_user$project$Aerial_SphericalMercator$projectLatToMapWidth, _p6.lat, mapWidth)) + halfMapWidth);
 		return {x: x, y: y, zoom: zoom};
 	});
-var _user$project$SlippyTiles$latLngToSlippyTileNumber = F2(
+var _user$project$Aerial_SlippyTiles$latLngToSlippyTileNumber = F2(
 	function (zoom, latLng) {
-		return _user$project$SlippyTiles$worldPixelPointToSlippyTileNumber(
-			A2(_user$project$SlippyTiles$latLngToWorldPixelPoint, zoom, latLng));
+		return _user$project$Aerial_SlippyTiles$worldPixelPointToSlippyTileNumber(
+			A2(_user$project$Aerial_SlippyTiles$latLngToWorldPixelPoint, zoom, latLng));
 	});
-var _user$project$SlippyTiles$worldPixelPointToLatLng = function (_p7) {
+var _user$project$Aerial_SlippyTiles$worldPixelPointToLatLng = function (_p7) {
 	var _p8 = _p7;
-	var mapWidth = _user$project$SlippyTiles$getMapWidth(_p8.zoom);
+	var mapWidth = _user$project$Aerial_SlippyTiles$getMapWidth(_p8.zoom);
 	var halfMapWidth = mapWidth / 2;
 	var mercatorX = _elm_lang$core$Basics$toFloat(_p8.x) - halfMapWidth;
 	var mercatorY = (mapWidth - _elm_lang$core$Basics$toFloat(_p8.y)) - halfMapWidth;
-	var lng = A2(_user$project$SphericalMercator$unprojectLngFromMapWidth, mapWidth, mercatorX);
-	var lat = A2(_user$project$SphericalMercator$unprojectLatFromMapWidth, mapWidth, mercatorY);
+	var lng = A2(_user$project$Aerial_SphericalMercator$unprojectLngFromMapWidth, mapWidth, mercatorX);
+	var lat = A2(_user$project$Aerial_SphericalMercator$unprojectLatFromMapWidth, mapWidth, mercatorY);
 	return {lat: lat, lng: lng};
 };
-var _user$project$SlippyTiles$SlippyTileNumber = F3(
+var _user$project$Aerial_SlippyTiles$SlippyTileNumber = F3(
 	function (a, b, c) {
 		return {x: a, y: b, zoom: c};
 	});
-var _user$project$SlippyTiles$WorldMapPixelPoint = F3(
+var _user$project$Aerial_SlippyTiles$WorldMapPixelPoint = F3(
 	function (a, b, c) {
 		return {x: a, y: b, zoom: c};
 	});
-var _user$project$Tiles$getTileSize = function (resolution) {
+var _user$project$Aerial_Tiles$getTileSize = function (resolution) {
 	return _elm_lang$core$Basics$floor(
-		_elm_lang$core$Basics$toFloat(_user$project$SlippyTiles$tileSize) / resolution);
+		_elm_lang$core$Basics$toFloat(_user$project$Aerial_SlippyTiles$tileSize) / resolution);
 };
-var _user$project$Tiles$getTileViewZoom = F2(
+var _user$project$Aerial_Tiles$getTileViewZoom = F2(
 	function (zoom, resolution) {
 		return zoom + _elm_lang$core$Basics$floor(
 			A2(_elm_lang$core$Basics$logBase, 2, resolution));
 	});
-var _user$project$Tiles$getWorldWidthInTiles = function (zoom) {
+var _user$project$Aerial_Tiles$getWorldWidthInTiles = function (zoom) {
 	return Math.pow(2, zoom);
 };
-var _user$project$VectorMath$isIn = F2(
+var _user$project$Aerial_VectorMath$isIn = F2(
 	function (rectangle, point) {
 		return (_elm_lang$core$Native_Utils.cmp(point.x, rectangle.topLeft.x) > -1) && ((_elm_lang$core$Native_Utils.cmp(point.y, rectangle.topLeft.y) > -1) && ((_elm_lang$core$Native_Utils.cmp(point.x, rectangle.bottomRight.x) < 1) && (_elm_lang$core$Native_Utils.cmp(point.y, rectangle.bottomRight.y) < 1)));
 	});
-var _user$project$VectorMath$timesFloatToInt = F2(
+var _user$project$Aerial_VectorMath$timesFloatToInt = F2(
 	function (aInt, bFloat) {
 		return _elm_lang$core$Basics$floor(
 			_elm_lang$core$Basics$toFloat(aInt) * bFloat);
 	});
-var _user$project$VectorMath$scalarMultiplyByFloat = F2(
+var _user$project$Aerial_VectorMath$scalarMultiplyByFloat = F2(
 	function (v, amount) {
 		return {
-			x: A2(_user$project$VectorMath$timesFloatToInt, v.x, amount),
-			y: A2(_user$project$VectorMath$timesFloatToInt, v.y, amount)
+			x: A2(_user$project$Aerial_VectorMath$timesFloatToInt, v.x, amount),
+			y: A2(_user$project$Aerial_VectorMath$timesFloatToInt, v.y, amount)
 		};
 	});
-var _user$project$VectorMath$scalarMultiply = F2(
+var _user$project$Aerial_VectorMath$scalarMultiply = F2(
 	function (v, amount) {
 		return {x: v.x * amount, y: v.y * amount};
 	});
-var _user$project$VectorMath$minusVector = F2(
+var _user$project$Aerial_VectorMath$minusVector = F2(
 	function (point, vector) {
 		return {x: point.x - vector.x, y: point.y - vector.y};
 	});
-var _user$project$VectorMath$addVector = F2(
+var _user$project$Aerial_VectorMath$addVector = F2(
 	function (point, vector) {
 		return {x: point.x + vector.x, y: point.y + vector.y};
 	});
-var _user$project$VectorMath$negate = function (p) {
+var _user$project$Aerial_VectorMath$negate = function (p) {
 	return {x: 0 - p.x, y: 0 - p.y};
 };
-var _user$project$VectorMath$difference = F2(
+var _user$project$Aerial_VectorMath$difference = F2(
 	function (pointA, pointB) {
 		return {x: pointB.x - pointA.x, y: pointB.y - pointA.y};
 	});
-var _user$project$VectorMath$fromMousePosition = function (mousePosition) {
+var _user$project$Aerial_VectorMath$fromMousePosition = function (mousePosition) {
 	return {x: mousePosition.x, y: mousePosition.y};
 };
-var _user$project$VectorMath$Vector2DInt = F2(
+var _user$project$Aerial_VectorMath$Vector2DInt = F2(
 	function (a, b) {
 		return {x: a, y: b};
 	});
-var _user$project$VectorMath$Point2DInt = F2(
+var _user$project$Aerial_VectorMath$Point2DInt = F2(
 	function (a, b) {
 		return {x: a, y: b};
 	});
-var _user$project$VectorMath$RectangleInt = F2(
+var _user$project$Aerial_VectorMath$RectangleInt = F2(
 	function (a, b) {
 		return {topLeft: a, bottomRight: b};
 	});
-var _user$project$MouseWheel$MouseWheelEvent = F4(
+var _user$project$Aerial_MouseWheel$MouseWheelEvent = F4(
 	function (a, b, c, d) {
 		return {deltaX: a, deltaY: b, deltaZ: c, deltaMode: d};
 	});
-var _user$project$MouseWheel$DeltaModeUnknown = {ctor: 'DeltaModeUnknown'};
-var _user$project$MouseWheel$DeltaModePage = {ctor: 'DeltaModePage'};
-var _user$project$MouseWheel$DeltaModeLine = {ctor: 'DeltaModeLine'};
-var _user$project$MouseWheel$DeltaModePixel = {ctor: 'DeltaModePixel'};
-var _user$project$MouseWheel$decodeDeltaMode = function (rawMode) {
+var _user$project$Aerial_MouseWheel$DeltaModeUnknown = {ctor: 'DeltaModeUnknown'};
+var _user$project$Aerial_MouseWheel$DeltaModePage = {ctor: 'DeltaModePage'};
+var _user$project$Aerial_MouseWheel$DeltaModeLine = {ctor: 'DeltaModeLine'};
+var _user$project$Aerial_MouseWheel$DeltaModePixel = {ctor: 'DeltaModePixel'};
+var _user$project$Aerial_MouseWheel$decodeDeltaMode = function (rawMode) {
 	var _p0 = rawMode;
 	switch (_p0) {
 		case 0:
-			return _user$project$MouseWheel$DeltaModePixel;
+			return _user$project$Aerial_MouseWheel$DeltaModePixel;
 		case 1:
-			return _user$project$MouseWheel$DeltaModeLine;
+			return _user$project$Aerial_MouseWheel$DeltaModeLine;
 		case 2:
-			return _user$project$MouseWheel$DeltaModePage;
+			return _user$project$Aerial_MouseWheel$DeltaModePage;
 		default:
-			return _user$project$MouseWheel$DeltaModeUnknown;
+			return _user$project$Aerial_MouseWheel$DeltaModeUnknown;
 	}
 };
-var _user$project$MouseWheel$mouseWheelEventDecoder = A5(
+var _user$project$Aerial_MouseWheel$mouseWheelEventDecoder = A5(
 	_elm_lang$core$Json_Decode$map4,
-	_user$project$MouseWheel$MouseWheelEvent,
+	_user$project$Aerial_MouseWheel$MouseWheelEvent,
 	A2(_elm_lang$core$Json_Decode$field, 'deltaX', _elm_lang$core$Json_Decode$float),
 	A2(_elm_lang$core$Json_Decode$field, 'deltaY', _elm_lang$core$Json_Decode$float),
 	A2(_elm_lang$core$Json_Decode$field, 'deltaZ', _elm_lang$core$Json_Decode$float),
 	A2(
 		_elm_lang$core$Json_Decode$map,
-		_user$project$MouseWheel$decodeDeltaMode,
+		_user$project$Aerial_MouseWheel$decodeDeltaMode,
 		A2(_elm_lang$core$Json_Decode$field, 'deltaMode', _elm_lang$core$Json_Decode$int)));
-var _user$project$MouseWheel$onMouseWheel = function (tagger) {
+var _user$project$Aerial_MouseWheel$onMouseWheel = function (tagger) {
 	return A3(
 		_elm_lang$html$Html_Events$onWithOptions,
 		'wheel',
 		{preventDefault: true, stopPropagation: true},
-		A2(_elm_lang$core$Json_Decode$map, tagger, _user$project$MouseWheel$mouseWheelEventDecoder));
+		A2(_elm_lang$core$Json_Decode$map, tagger, _user$project$Aerial_MouseWheel$mouseWheelEventDecoder));
 };
-var _user$project$Types$Model = F6(
+var _user$project$Aerial_Types$Model = F6(
 	function (a, b, c, d, e, f) {
 		return {latLng: a, zoom: b, mapWidthPx: c, mapHeightPx: d, resolution: e, maybeMouseOver: f};
 	});
-var _user$project$Types$MouseOverState = F2(
+var _user$project$Aerial_Types$MouseOverState = F2(
 	function (a, b) {
 		return {position: a, down: b};
 	});
-var _user$project$Types$ParentMsg = function (a) {
-	return {ctor: 'ParentMsg', _0: a};
-};
-var _user$project$Types$MouseWheel = function (a) {
+var _user$project$Aerial_Types$MouseWheel = function (a) {
 	return {ctor: 'MouseWheel', _0: a};
 };
-var _user$project$Types$MouseLeave = function (a) {
+var _user$project$Aerial_Types$MouseLeave = function (a) {
 	return {ctor: 'MouseLeave', _0: a};
 };
-var _user$project$Types$MouseClickEvent = function (a) {
-	return {ctor: 'MouseClickEvent', _0: a};
+var _user$project$Aerial_Types$PrivateMouseClick = function (a) {
+	return {ctor: 'PrivateMouseClick', _0: a};
 };
-var _user$project$Types$MouseEnter = function (a) {
+var _user$project$Aerial_Types$MouseEnter = function (a) {
 	return {ctor: 'MouseEnter', _0: a};
 };
-var _user$project$Types$MouseMove = function (a) {
+var _user$project$Aerial_Types$MouseMove = function (a) {
 	return {ctor: 'MouseMove', _0: a};
 };
-var _user$project$Types$MouseUp = {ctor: 'MouseUp'};
-var _user$project$Types$MouseDown = function (a) {
+var _user$project$Aerial_Types$MouseUp = {ctor: 'MouseUp'};
+var _user$project$Aerial_Types$MouseDown = function (a) {
 	return {ctor: 'MouseDown', _0: a};
 };
-var _user$project$Types$UpdateZoom = function (a) {
+var _user$project$Aerial_Types$UpdateZoom = function (a) {
 	return {ctor: 'UpdateZoom', _0: a};
 };
-var _user$project$Types$UpdateLng = function (a) {
+var _user$project$Aerial_Types$UpdateLng = function (a) {
 	return {ctor: 'UpdateLng', _0: a};
 };
-var _user$project$Types$UpdateLat = function (a) {
+var _user$project$Aerial_Types$UpdateLat = function (a) {
 	return {ctor: 'UpdateLat', _0: a};
 };
-var _user$project$Types$SelfMsg = function (a) {
+var _user$project$Aerial_Types$ParentMsg = function (a) {
+	return {ctor: 'ParentMsg', _0: a};
+};
+var _user$project$Aerial_Types$ReturnNothing = {ctor: 'ReturnNothing'};
+var _user$project$Aerial_Types$OutMsg = function (a) {
+	return {ctor: 'OutMsg', _0: a};
+};
+var _user$project$Aerial_Types$SelfMsg = function (a) {
 	return {ctor: 'SelfMsg', _0: a};
 };
-var _user$project$Types$MouseClick = function (a) {
+var _user$project$Aerial_Types$MouseClick = function (a) {
 	return {ctor: 'MouseClick', _0: a};
 };
-var _user$project$Model$viewportRectangle = function (model) {
+var _user$project$Aerial_Model$viewportRectangle = function (model) {
 	return {
 		topLeft: {x: 0, y: 0},
 		bottomRight: {x: model.mapWidthPx, y: model.mapHeightPx}
 	};
 };
-var _user$project$Model$isInViewport = F2(
+var _user$project$Aerial_Model$isInViewport = F2(
 	function (model, position) {
 		return A2(
-			_user$project$VectorMath$isIn,
-			_user$project$Model$viewportRectangle(model),
+			_user$project$Aerial_VectorMath$isIn,
+			_user$project$Aerial_Model$viewportRectangle(model),
 			position);
 	});
-var _user$project$Model$cleanLat = function (lat) {
+var _user$project$Aerial_Model$cleanLat = function (lat) {
 	return (_elm_lang$core$Native_Utils.cmp(lat, 90.0) > -1) ? 90.0 : ((_elm_lang$core$Native_Utils.cmp(lat, -90.0) < 1) ? -90.0 : lat);
 };
-var _user$project$Model$cleanLng = function (lng) {
-	return A2(_user$project$Util$fmod, lng + 180.0, 360.0) + -180.0;
+var _user$project$Aerial_Model$cleanLng = function (lng) {
+	return A2(_user$project$Aerial_Util$fmod, lng + 180.0, 360.0) + -180.0;
 };
-var _user$project$Model$cleanLatLng = function (_p0) {
+var _user$project$Aerial_Model$cleanLatLng = function (_p0) {
 	var _p1 = _p0;
 	return {
-		lat: _user$project$Model$cleanLat(_p1.lat),
-		lng: _user$project$Model$cleanLng(_p1.lng)
+		lat: _user$project$Aerial_Model$cleanLat(_p1.lat),
+		lng: _user$project$Aerial_Model$cleanLng(_p1.lng)
 	};
 };
-var _user$project$Model$setZoom = F2(
+var _user$project$Aerial_Model$setZoom = F2(
 	function (model, zoom) {
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{zoom: zoom});
 	});
-var _user$project$Model$cleanZoom = function (zoom) {
+var _user$project$Aerial_Model$cleanZoom = function (zoom) {
 	return (_elm_lang$core$Native_Utils.cmp(zoom, 19) > 0) ? 19 : ((_elm_lang$core$Native_Utils.cmp(zoom, 2) < 0) ? 2 : zoom);
 };
-var _user$project$Model$panByPixels = F2(
+var _user$project$Aerial_Model$panByPixels = F2(
 	function (model, vector) {
-		var mapCenter = A2(_user$project$SlippyTiles$latLngToWorldPixelPoint, model.zoom, model.latLng);
+		var mapCenter = A2(_user$project$Aerial_SlippyTiles$latLngToWorldPixelPoint, model.zoom, model.latLng);
 		var newMapCenter = A2(
-			_user$project$VectorMath$minusVector,
+			_user$project$Aerial_VectorMath$minusVector,
 			{x: mapCenter.x, y: mapCenter.y},
 			vector);
-		var newLatLng = _user$project$SlippyTiles$worldPixelPointToLatLng(
+		var newLatLng = _user$project$Aerial_SlippyTiles$worldPixelPointToLatLng(
 			{x: newMapCenter.x, y: newMapCenter.y, zoom: model.zoom});
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{latLng: newLatLng});
 	});
-var _user$project$Model$mapHeightInWorldPixels = F2(
+var _user$project$Aerial_Model$mapHeightInWorldPixels = F2(
 	function (mapHeightPx, resolution) {
-		return A2(_user$project$VectorMath$timesFloatToInt, mapHeightPx, resolution);
+		return A2(_user$project$Aerial_VectorMath$timesFloatToInt, mapHeightPx, resolution);
 	});
-var _user$project$Model$mapWidthInWorldPixels = F2(
+var _user$project$Aerial_Model$mapWidthInWorldPixels = F2(
 	function (mapWidthPx, resolution) {
-		return A2(_user$project$VectorMath$timesFloatToInt, mapWidthPx, resolution);
+		return A2(_user$project$Aerial_VectorMath$timesFloatToInt, mapWidthPx, resolution);
 	});
-var _user$project$Model$getViewportTopLeftWorldPixel = F3(
+var _user$project$Aerial_Model$getViewportTopLeftWorldPixel = F3(
 	function (model, zoom, resolution) {
-		var mapCenter = A2(_user$project$SlippyTiles$latLngToWorldPixelPoint, zoom, model.latLng);
+		var mapCenter = A2(_user$project$Aerial_SlippyTiles$latLngToWorldPixelPoint, zoom, model.latLng);
 		return {
-			x: mapCenter.x - ((A2(_user$project$Model$mapWidthInWorldPixels, model.mapWidthPx, resolution) / 2) | 0),
-			y: mapCenter.y - ((A2(_user$project$Model$mapHeightInWorldPixels, model.mapHeightPx, resolution) / 2) | 0),
+			x: mapCenter.x - ((A2(_user$project$Aerial_Model$mapWidthInWorldPixels, model.mapWidthPx, resolution) / 2) | 0),
+			y: mapCenter.y - ((A2(_user$project$Aerial_Model$mapHeightInWorldPixels, model.mapHeightPx, resolution) / 2) | 0),
 			zoom: zoom
 		};
 	});
-var _user$project$Model$worldPixelPointToViewportPoint = F4(
+var _user$project$Aerial_Model$worldPixelPointToViewportPoint = F4(
 	function (worldPixelPoint, model, zoom, resolution) {
-		var viewportTopLeftWorldPixel = A3(_user$project$Model$getViewportTopLeftWorldPixel, model, zoom, resolution);
+		var viewportTopLeftWorldPixel = A3(_user$project$Aerial_Model$getViewportTopLeftWorldPixel, model, zoom, resolution);
 		var vector = {x: worldPixelPoint.x - viewportTopLeftWorldPixel.x, y: worldPixelPoint.y - viewportTopLeftWorldPixel.y};
-		return A2(_user$project$VectorMath$scalarMultiplyByFloat, vector, 1.0 / resolution);
+		return A2(_user$project$Aerial_VectorMath$scalarMultiplyByFloat, vector, 1.0 / resolution);
 	});
-var _user$project$Model$latLngToViewportPoint = F2(
+var _user$project$Aerial_Model$latLngToViewportPoint = F2(
 	function (model, latLng) {
-		var worldPixelPoint = A2(_user$project$SlippyTiles$latLngToWorldPixelPoint, model.zoom, latLng);
-		return A4(_user$project$Model$worldPixelPointToViewportPoint, worldPixelPoint, model, model.zoom, 1.0);
+		var worldPixelPoint = A2(_user$project$Aerial_SlippyTiles$latLngToWorldPixelPoint, model.zoom, latLng);
+		return A4(_user$project$Aerial_Model$worldPixelPointToViewportPoint, worldPixelPoint, model, model.zoom, 1.0);
 	});
-var _user$project$Model$getViewportBottomRightWorldPixel = F3(
+var _user$project$Aerial_Model$getViewportBottomRightWorldPixel = F3(
 	function (model, zoom, resolution) {
-		var mapCenter = A2(_user$project$SlippyTiles$latLngToWorldPixelPoint, zoom, model.latLng);
+		var mapCenter = A2(_user$project$Aerial_SlippyTiles$latLngToWorldPixelPoint, zoom, model.latLng);
 		return {
-			x: mapCenter.x + ((A2(_user$project$Model$mapWidthInWorldPixels, model.mapWidthPx, resolution) / 2) | 0),
-			y: mapCenter.y + ((A2(_user$project$Model$mapHeightInWorldPixels, model.mapHeightPx, resolution) / 2) | 0),
+			x: mapCenter.x + ((A2(_user$project$Aerial_Model$mapWidthInWorldPixels, model.mapWidthPx, resolution) / 2) | 0),
+			y: mapCenter.y + ((A2(_user$project$Aerial_Model$mapHeightInWorldPixels, model.mapHeightPx, resolution) / 2) | 0),
 			zoom: zoom
 		};
 	});
-var _user$project$Model$getWorldWidthInTiles = function (model) {
-	return _user$project$Tiles$getWorldWidthInTiles(model.zoom);
+var _user$project$Aerial_Model$getWorldWidthInTiles = function (model) {
+	return _user$project$Aerial_Tiles$getWorldWidthInTiles(model.zoom);
 };
-var _user$project$Model$getViewportCenter = function (model) {
+var _user$project$Aerial_Model$getViewportCenter = function (model) {
 	return {x: (model.mapWidthPx / 2) | 0, y: (model.mapHeightPx / 2) | 0};
 };
-var _user$project$Model$getViewportCenterOffset = F2(
+var _user$project$Aerial_Model$getViewportCenterOffset = F2(
 	function (model, viewportPoint) {
 		return A2(
-			_user$project$VectorMath$difference,
-			_user$project$Model$getViewportCenter(model),
+			_user$project$Aerial_VectorMath$difference,
+			_user$project$Aerial_Model$getViewportCenter(model),
 			viewportPoint);
 	});
-var _user$project$Model$zoomAtCursor = F2(
+var _user$project$Aerial_Model$zoomAtCursor = F2(
 	function (model, zoomIn) {
 		var _p2 = model.maybeMouseOver;
 		if (_p2.ctor === 'Just') {
@@ -9734,16 +9738,16 @@ var _user$project$Model$zoomAtCursor = F2(
 			var newModel = _elm_lang$core$Native_Utils.update(
 				model,
 				{
-					zoom: _user$project$Model$cleanZoom(model.zoom + zoomDelta)
+					zoom: _user$project$Aerial_Model$cleanZoom(model.zoom + zoomDelta)
 				});
 			var newZoom = newModel.zoom;
 			if (!_elm_lang$core$Native_Utils.eq(newZoom, model.zoom)) {
-				var viewportCenterOffset = A2(_user$project$Model$getViewportCenterOffset, model, _p2._0.position);
-				var panVector = zoomIn ? _user$project$VectorMath$negate(viewportCenterOffset) : A2(
-					_user$project$VectorMath$scalarMultiply,
+				var viewportCenterOffset = A2(_user$project$Aerial_Model$getViewportCenterOffset, model, _p2._0.position);
+				var panVector = zoomIn ? _user$project$Aerial_VectorMath$negate(viewportCenterOffset) : A2(
+					_user$project$Aerial_VectorMath$scalarMultiply,
 					viewportCenterOffset,
 					Math.pow(2, zoomDelta));
-				return A2(_user$project$Model$panByPixels, newModel, panVector);
+				return A2(_user$project$Aerial_Model$panByPixels, newModel, panVector);
 			} else {
 				return model;
 			}
@@ -9751,23 +9755,23 @@ var _user$project$Model$zoomAtCursor = F2(
 			return model;
 		}
 	});
-var _user$project$Model$viewportPointToWorldPixelPoint = F2(
+var _user$project$Aerial_Model$viewportPointToWorldPixelPoint = F2(
 	function (viewportPoint, model) {
-		var viewportTopLeftWorldPixel = A3(_user$project$Model$getViewportTopLeftWorldPixel, model, model.zoom, 1.0);
+		var viewportTopLeftWorldPixel = A3(_user$project$Aerial_Model$getViewportTopLeftWorldPixel, model, model.zoom, 1.0);
 		return {x: viewportTopLeftWorldPixel.x + viewportPoint.x, y: viewportTopLeftWorldPixel.y + viewportPoint.y, zoom: model.zoom};
 	});
-var _user$project$Model$viewportPointToLatLng = F2(
+var _user$project$Aerial_Model$viewportPointToLatLng = F2(
 	function (model, viewportPoint) {
-		return _user$project$SlippyTiles$worldPixelPointToLatLng(
-			A2(_user$project$Model$viewportPointToWorldPixelPoint, viewportPoint, model));
+		return _user$project$Aerial_SlippyTiles$worldPixelPointToLatLng(
+			A2(_user$project$Aerial_Model$viewportPointToWorldPixelPoint, viewportPoint, model));
 	});
-var _user$project$Model$getDraggingOffset = function (mouseOverState) {
+var _user$project$Aerial_Model$getDraggingOffset = function (mouseOverState) {
 	return A2(
 		_elm_lang$core$Maybe$map,
 		function (_p3) {
-			return _user$project$VectorMath$negate(
+			return _user$project$Aerial_VectorMath$negate(
 				A2(
-					_user$project$VectorMath$difference,
+					_user$project$Aerial_VectorMath$difference,
 					mouseOverState.position,
 					function (_) {
 						return _.startPosition;
@@ -9775,9 +9779,9 @@ var _user$project$Model$getDraggingOffset = function (mouseOverState) {
 		},
 		mouseOverState.down);
 };
-var _user$project$Model$initZoom = 2;
-var _user$project$Model$initLatLng = {lat: -37.813611, lng: 144.963056};
-var _user$project$Model$init = {latLng: _user$project$Model$initLatLng, zoom: _user$project$Model$initZoom, mapWidthPx: 1000, mapHeightPx: 800, resolution: 1.0, maybeMouseOver: _elm_lang$core$Maybe$Nothing};
+var _user$project$Aerial_Model$initZoom = 2;
+var _user$project$Aerial_Model$initLatLng = {lat: -37.813611, lng: 144.963056};
+var _user$project$Aerial_Model$init = {latLng: _user$project$Aerial_Model$initLatLng, zoom: _user$project$Aerial_Model$initZoom, mapWidthPx: 1000, mapHeightPx: 800, resolution: 1.0, maybeMouseOver: _elm_lang$core$Maybe$Nothing};
 var _user$project$AddPinPlugin$markerWrapperView = F2(
 	function (markerView, viewportPosition) {
 		return A2(
@@ -9820,37 +9824,35 @@ var _user$project$AddPinPlugin$markerWrapperView = F2(
 				_1: {ctor: '[]'}
 			});
 	});
+var _user$project$AddPinPlugin$updateWithAerialOutMsg = F3(
+	function (outMsg, aerialModel, model) {
+		var _p0 = outMsg;
+		var latLng = A2(_user$project$Aerial_Model$viewportPointToLatLng, aerialModel, _p0._0);
+		var newMarkers = A2(
+			_elm_lang$core$Basics_ops['++'],
+			model.markers,
+			{
+				ctor: '::',
+				_0: latLng,
+				_1: {ctor: '[]'}
+			});
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{markers: newMarkers});
+	});
 var _user$project$AddPinPlugin$update = F3(
 	function (msg, model, aerialModel) {
-		update:
-		while (true) {
-			var _p0 = msg;
-			if (_p0.ctor === 'AerialOutMsg') {
-				var _p1 = _p0._0;
-				if (_p1.ctor === 'SelfMsg') {
-					var _v2 = _p1._0,
-						_v3 = model,
-						_v4 = aerialModel;
-					msg = _v2;
-					model = _v3;
-					aerialModel = _v4;
-					continue update;
-				} else {
-					return model;
-				}
-			} else {
-				var _p2 = A2(_elm_lang$core$Debug$log, 'AddPinPlugin MouseClick', true);
-				return model;
-			}
-		}
+		var _p1 = msg;
+		var _p2 = A2(_elm_lang$core$Debug$log, 'AddPinPlugin MarkerMouseClick', true);
+		return model;
 	});
 var _user$project$AddPinPlugin$init = {
 	markers: {
 		ctor: '::',
-		_0: A2(_user$project$Geo$LatLng, -37.814, 144.96332),
+		_0: A2(_user$project$Aerial_Geo$LatLng, -37.814, 144.96332),
 		_1: {
 			ctor: '::',
-			_0: A2(_user$project$Geo$LatLng, -33.86785, 151.20732),
+			_0: A2(_user$project$Aerial_Geo$LatLng, -33.86785, 151.20732),
 			_1: {ctor: '[]'}
 		}
 	}
@@ -9858,7 +9860,7 @@ var _user$project$AddPinPlugin$init = {
 var _user$project$AddPinPlugin$Model = function (a) {
 	return {markers: a};
 };
-var _user$project$AddPinPlugin$MouseClick = {ctor: 'MouseClick'};
+var _user$project$AddPinPlugin$MarkerMouseClick = {ctor: 'MarkerMouseClick'};
 var _user$project$AddPinPlugin$markerView = A2(
 	_elm_lang$html$Html$div,
 	{
@@ -9907,7 +9909,7 @@ var _user$project$AddPinPlugin$markerView = A2(
 				_elm_lang$html$Html_Events$onWithOptions,
 				'click',
 				{stopPropagation: true, preventDefault: true},
-				_elm_lang$core$Json_Decode$succeed(_user$project$AddPinPlugin$MouseClick)),
+				_elm_lang$core$Json_Decode$succeed(_user$project$AddPinPlugin$MarkerMouseClick)),
 			_1: {ctor: '[]'}
 		}
 	},
@@ -9919,7 +9921,7 @@ var _user$project$AddPinPlugin$view = F2(
 			_user$project$AddPinPlugin$markerWrapperView(_user$project$AddPinPlugin$markerView),
 			A2(
 				_elm_lang$core$List$map,
-				_user$project$Model$latLngToViewportPoint(aerialModel),
+				_user$project$Aerial_Model$latLngToViewportPoint(aerialModel),
 				model.markers));
 		return A2(
 			_elm_lang$html$Html$div,
@@ -9930,16 +9932,43 @@ var _user$project$AddPinPlugin$view = F2(
 			},
 			markerWrappers);
 	});
-var _user$project$AddPinPlugin$AerialOutMsg = function (a) {
-	return {ctor: 'AerialOutMsg', _0: a};
+var _user$project$Aerial_MouseEventPositions$onMouseMove = F2(
+	function (positionDecoder, tagger) {
+		return A2(
+			_elm_lang$html$Html_Events$on,
+			'mousemove',
+			A2(_elm_lang$core$Json_Decode$map, tagger, positionDecoder));
+	});
+var _user$project$Aerial_MouseEventPositions$offsetTopDecoder = A2(_elm_lang$core$Json_Decode$field, 'offsetTop', _elm_lang$core$Json_Decode$int);
+var _user$project$Aerial_MouseEventPositions$offsetLeftDecoder = A2(_elm_lang$core$Json_Decode$field, 'offsetLeft', _elm_lang$core$Json_Decode$int);
+var _user$project$Aerial_MouseEventPositions$clientYDecoder = A2(_elm_lang$core$Json_Decode$field, 'clientY', _elm_lang$core$Json_Decode$int);
+var _user$project$Aerial_MouseEventPositions$clientXDecoder = A2(_elm_lang$core$Json_Decode$field, 'clientX', _elm_lang$core$Json_Decode$int);
+var _user$project$Aerial_MouseEventPositions$currentTargetDecoder = function (decoder) {
+	return A2(_elm_lang$core$Json_Decode$field, 'currentTarget', decoder);
 };
-var _user$project$Update$update = F2(
+var _user$project$Aerial_MouseEventPositions$Position = F2(
+	function (a, b) {
+		return {x: a, y: b};
+	});
+var _user$project$Aerial_MouseEventPositions$clientPositionDecoder = A3(_elm_lang$core$Json_Decode$map2, _user$project$Aerial_MouseEventPositions$Position, _user$project$Aerial_MouseEventPositions$clientXDecoder, _user$project$Aerial_MouseEventPositions$clientYDecoder);
+var _user$project$Aerial_MouseEventPositions$offsetPositionDecoder = A3(_elm_lang$core$Json_Decode$map2, _user$project$Aerial_MouseEventPositions$Position, _user$project$Aerial_MouseEventPositions$offsetLeftDecoder, _user$project$Aerial_MouseEventPositions$offsetTopDecoder);
+var _user$project$Aerial_MouseEventPositions$currentTargetOffsetPositionDecoder = _user$project$Aerial_MouseEventPositions$currentTargetDecoder(_user$project$Aerial_MouseEventPositions$offsetPositionDecoder);
+var _user$project$Aerial_MouseEventPositions$mousePositionDecoder = A3(
+	_elm_lang$core$Json_Decode$map2,
+	F2(
+		function (clientPosition, currentTarget) {
+			return {x: clientPosition.x - currentTarget.x, y: clientPosition.y - currentTarget.y};
+		}),
+	_user$project$Aerial_MouseEventPositions$clientPositionDecoder,
+	_user$project$Aerial_MouseEventPositions$currentTargetOffsetPositionDecoder);
+var _user$project$Aerial_MouseEventPositions$onMouseMoveGetPosition = _user$project$Aerial_MouseEventPositions$onMouseMove(_user$project$Aerial_MouseEventPositions$mousePositionDecoder);
+var _user$project$Aerial_Update$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
 		switch (_p0.ctor) {
 			case 'UpdateLng':
 				var latLng = model.latLng;
-				var newLng = _user$project$Model$cleanLng(
+				var newLng = _user$project$Aerial_Model$cleanLng(
 					A2(
 						_elm_lang$core$Result$withDefault,
 						latLng.lng,
@@ -9952,11 +9981,11 @@ var _user$project$Update$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{latLng: newLatLng}),
-					_1: _elm_lang$core$Maybe$Nothing
+					_1: _user$project$Aerial_Types$ReturnNothing
 				};
 			case 'UpdateLat':
 				var latLng = model.latLng;
-				var newLat = _user$project$Model$cleanLat(
+				var newLat = _user$project$Aerial_Model$cleanLat(
 					A2(
 						_elm_lang$core$Result$withDefault,
 						latLng.lat,
@@ -9969,7 +9998,7 @@ var _user$project$Update$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{latLng: newLatLng}),
-					_1: _elm_lang$core$Maybe$Nothing
+					_1: _user$project$Aerial_Types$ReturnNothing
 				};
 			case 'UpdateZoom':
 				var newModel = A2(
@@ -9977,9 +10006,9 @@ var _user$project$Update$update = F2(
 					model,
 					A2(
 						_elm_lang$core$Result$map,
-						_user$project$Model$setZoom(model),
+						_user$project$Aerial_Model$setZoom(model),
 						_elm_lang$core$String$toInt(_p0._0)));
-				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Maybe$Nothing};
+				return {ctor: '_Tuple2', _0: newModel, _1: _user$project$Aerial_Types$ReturnNothing};
 			case 'MouseDown':
 				var maybeMouseOver = A2(
 					_elm_lang$core$Maybe$map,
@@ -9997,7 +10026,7 @@ var _user$project$Update$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{maybeMouseOver: maybeMouseOver}),
-					_1: _elm_lang$core$Maybe$Nothing
+					_1: _user$project$Aerial_Types$ReturnNothing
 				};
 			case 'MouseUp':
 				var newModel = function () {
@@ -10008,13 +10037,13 @@ var _user$project$Update$update = F2(
 						var _p3 = _p1._0;
 						var _p2 = _p3.down;
 						if (_p2.ctor === 'Just') {
-							var viewportCenter = _user$project$Model$getViewportCenter(model);
-							var mouseMovedVector = A2(_user$project$VectorMath$difference, _p2._0.startPosition, _p3.position);
-							var newCenterLatLng = _user$project$Model$cleanLatLng(
+							var viewportCenter = _user$project$Aerial_Model$getViewportCenter(model);
+							var mouseMovedVector = A2(_user$project$Aerial_VectorMath$difference, _p2._0.startPosition, _p3.position);
+							var newCenterLatLng = _user$project$Aerial_Model$cleanLatLng(
 								A2(
-									_user$project$Model$viewportPointToLatLng,
+									_user$project$Aerial_Model$viewportPointToLatLng,
 									model,
-									A2(_user$project$VectorMath$minusVector, viewportCenter, mouseMovedVector)));
+									A2(_user$project$Aerial_VectorMath$minusVector, viewportCenter, mouseMovedVector)));
 							return _elm_lang$core$Native_Utils.update(
 								model,
 								{
@@ -10029,7 +10058,7 @@ var _user$project$Update$update = F2(
 						}
 					}
 				}();
-				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Maybe$Nothing};
+				return {ctor: '_Tuple2', _0: newModel, _1: _user$project$Aerial_Types$ReturnNothing};
 			case 'MouseMove':
 				var maybeMouseOver = A2(
 					_elm_lang$core$Maybe$map,
@@ -10044,7 +10073,7 @@ var _user$project$Update$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{maybeMouseOver: maybeMouseOver}),
-					_1: _elm_lang$core$Maybe$Nothing
+					_1: _user$project$Aerial_Types$ReturnNothing
 				};
 			case 'MouseEnter':
 				return {
@@ -10055,43 +10084,42 @@ var _user$project$Update$update = F2(
 							maybeMouseOver: _elm_lang$core$Maybe$Just(
 								{position: _p0._0, down: _elm_lang$core$Maybe$Nothing})
 						}),
-					_1: _elm_lang$core$Maybe$Nothing
+					_1: _user$project$Aerial_Types$ReturnNothing
 				};
 			case 'MouseLeave':
 				return A2(
 					_elm_lang$core$Debug$log,
 					'isInViewport',
-					A2(_user$project$Model$isInViewport, model, _p0._0)) ? {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Maybe$Nothing} : {
+					A2(_user$project$Aerial_Model$isInViewport, model, _p0._0)) ? {ctor: '_Tuple2', _0: model, _1: _user$project$Aerial_Types$ReturnNothing} : {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{maybeMouseOver: _elm_lang$core$Maybe$Nothing}),
-					_1: _elm_lang$core$Maybe$Nothing
+					_1: _user$project$Aerial_Types$ReturnNothing
 				};
-			case 'MouseClickEvent':
+			case 'PrivateMouseClick':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _elm_lang$core$Maybe$Just(
-						_user$project$Types$MouseClick(_p0._0))
+					_1: _user$project$Aerial_Types$OutMsg(
+						_user$project$Aerial_Types$MouseClick(_p0._0))
 				};
 			case 'MouseWheel':
 				var _p5 = _p0._0;
 				var newModel = function () {
 					var _p4 = model.maybeMouseOver;
 					if (_p4.ctor === 'Just') {
-						return (_elm_lang$core$Native_Utils.cmp(_p5.deltaY, 0.0) < 0) ? A2(_user$project$Model$zoomAtCursor, model, true) : ((_elm_lang$core$Native_Utils.cmp(_p5.deltaY, 0.0) > 0) ? A2(_user$project$Model$zoomAtCursor, model, false) : model);
+						return (_elm_lang$core$Native_Utils.cmp(_p5.deltaY, 0.0) < 0) ? A2(_user$project$Aerial_Model$zoomAtCursor, model, true) : ((_elm_lang$core$Native_Utils.cmp(_p5.deltaY, 0.0) > 0) ? A2(_user$project$Aerial_Model$zoomAtCursor, model, false) : model);
 					} else {
 						return model;
 					}
 				}();
-				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Maybe$Nothing};
+				return {ctor: '_Tuple2', _0: newModel, _1: _user$project$Aerial_Types$ReturnNothing};
 			default:
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _elm_lang$core$Maybe$Just(
-						_user$project$Types$SelfMsg(_p0._0))
+					_1: _user$project$Aerial_Types$SelfMsg(_p0._0)
 				};
 		}
 	});
@@ -10226,11 +10254,11 @@ var _user$project$MouseEvents$MouseEvent = F2(
 	function (a, b) {
 		return {clientPos: a, targetPos: b};
 	});
-var _user$project$ViewModel$getTileViewTileSize = function (resolution) {
+var _user$project$Aerial_ViewModel$getTileViewTileSize = function (resolution) {
 	return _elm_lang$core$Basics$floor(
-		_elm_lang$core$Basics$toFloat(_user$project$SlippyTiles$tileSize) / resolution);
+		_elm_lang$core$Basics$toFloat(_user$project$Aerial_SlippyTiles$tileSize) / resolution);
 };
-var _user$project$ViewModel$toTileViewModel = F2(
+var _user$project$Aerial_ViewModel$toTileViewModel = F2(
 	function (_p1, _p0) {
 		var _p2 = _p1;
 		var _p9 = _p2.worldWidthInTiles;
@@ -10252,63 +10280,33 @@ var _user$project$ViewModel$toTileViewModel = F2(
 			tileSize: _p6
 		};
 	});
-var _user$project$ViewModel$getTileViewModels = F2(
+var _user$project$Aerial_ViewModel$getTileViewModels = F2(
 	function (model, resolution) {
-		var tileSize = _user$project$Tiles$getTileSize(resolution);
-		var zoom = A2(_user$project$Tiles$getTileViewZoom, model.zoom, resolution);
-		var worldWidthInTiles = _user$project$Tiles$getWorldWidthInTiles(zoom);
-		var viewportTopLeftWorldPixel = A3(_user$project$Model$getViewportTopLeftWorldPixel, model, zoom, resolution);
-		var topLeftTileNumber = _user$project$SlippyTiles$worldPixelPointToSlippyTileNumber(viewportTopLeftWorldPixel);
-		var topLeftTileWorldPixelPoint = _user$project$SlippyTiles$getTileTopLeftWorldPixelPoint(topLeftTileNumber);
-		var viewportBottomRightWorldPixel = A3(_user$project$Model$getViewportBottomRightWorldPixel, model, zoom, resolution);
-		var numColumns = ((A2(_user$project$VectorMath$timesFloatToInt, viewportBottomRightWorldPixel.x - topLeftTileWorldPixelPoint.x, 1.0 / resolution) / tileSize) | 0) + 1;
-		var numRows = ((A2(_user$project$VectorMath$timesFloatToInt, viewportBottomRightWorldPixel.y - topLeftTileWorldPixelPoint.y, 1.0 / resolution) / tileSize) | 0) + 1;
+		var tileSize = _user$project$Aerial_Tiles$getTileSize(resolution);
+		var zoom = A2(_user$project$Aerial_Tiles$getTileViewZoom, model.zoom, resolution);
+		var worldWidthInTiles = _user$project$Aerial_Tiles$getWorldWidthInTiles(zoom);
+		var viewportTopLeftWorldPixel = A3(_user$project$Aerial_Model$getViewportTopLeftWorldPixel, model, zoom, resolution);
+		var topLeftTileNumber = _user$project$Aerial_SlippyTiles$worldPixelPointToSlippyTileNumber(viewportTopLeftWorldPixel);
+		var topLeftTileWorldPixelPoint = _user$project$Aerial_SlippyTiles$getTileTopLeftWorldPixelPoint(topLeftTileNumber);
+		var viewportBottomRightWorldPixel = A3(_user$project$Aerial_Model$getViewportBottomRightWorldPixel, model, zoom, resolution);
+		var numColumns = ((A2(_user$project$Aerial_VectorMath$timesFloatToInt, viewportBottomRightWorldPixel.x - topLeftTileWorldPixelPoint.x, 1.0 / resolution) / tileSize) | 0) + 1;
+		var numRows = ((A2(_user$project$Aerial_VectorMath$timesFloatToInt, viewportBottomRightWorldPixel.y - topLeftTileWorldPixelPoint.y, 1.0 / resolution) / tileSize) | 0) + 1;
 		var matrix = A2(
-			_user$project$Util$cartesianProduct,
+			_user$project$Aerial_Util$cartesianProduct,
 			A2(_elm_lang$core$List$range, 0, numColumns - 1),
 			A2(_elm_lang$core$List$range, 0, numRows - 1));
-		var topLeftTileViewportPoint = A4(_user$project$Model$worldPixelPointToViewportPoint, topLeftTileWorldPixelPoint, model, zoom, resolution);
+		var topLeftTileViewportPoint = A4(_user$project$Aerial_Model$worldPixelPointToViewportPoint, topLeftTileWorldPixelPoint, model, zoom, resolution);
 		var argsRecord = {topLeftTileViewportPoint: topLeftTileViewportPoint, topLeftTileNumber: topLeftTileNumber, tileSize: tileSize, worldWidthInTiles: worldWidthInTiles, zoom: zoom};
 		return A2(
 			_elm_lang$core$List$map,
-			_user$project$ViewModel$toTileViewModel(argsRecord),
+			_user$project$Aerial_ViewModel$toTileViewModel(argsRecord),
 			matrix);
 	});
-var _user$project$ViewModel$TileViewModel = F3(
+var _user$project$Aerial_ViewModel$TileViewModel = F3(
 	function (a, b, c) {
 		return {tileNumber: a, viewportPoint: b, tileSize: c};
 	});
-var _user$project$MouseEventPositions$onMouseMove = F2(
-	function (positionDecoder, tagger) {
-		return A2(
-			_elm_lang$html$Html_Events$on,
-			'mousemove',
-			A2(_elm_lang$core$Json_Decode$map, tagger, positionDecoder));
-	});
-var _user$project$MouseEventPositions$offsetTopDecoder = A2(_elm_lang$core$Json_Decode$field, 'offsetTop', _elm_lang$core$Json_Decode$int);
-var _user$project$MouseEventPositions$offsetLeftDecoder = A2(_elm_lang$core$Json_Decode$field, 'offsetLeft', _elm_lang$core$Json_Decode$int);
-var _user$project$MouseEventPositions$clientYDecoder = A2(_elm_lang$core$Json_Decode$field, 'clientY', _elm_lang$core$Json_Decode$int);
-var _user$project$MouseEventPositions$clientXDecoder = A2(_elm_lang$core$Json_Decode$field, 'clientX', _elm_lang$core$Json_Decode$int);
-var _user$project$MouseEventPositions$currentTargetDecoder = function (decoder) {
-	return A2(_elm_lang$core$Json_Decode$field, 'currentTarget', decoder);
-};
-var _user$project$MouseEventPositions$Position = F2(
-	function (a, b) {
-		return {x: a, y: b};
-	});
-var _user$project$MouseEventPositions$clientPositionDecoder = A3(_elm_lang$core$Json_Decode$map2, _user$project$MouseEventPositions$Position, _user$project$MouseEventPositions$clientXDecoder, _user$project$MouseEventPositions$clientYDecoder);
-var _user$project$MouseEventPositions$offsetPositionDecoder = A3(_elm_lang$core$Json_Decode$map2, _user$project$MouseEventPositions$Position, _user$project$MouseEventPositions$offsetLeftDecoder, _user$project$MouseEventPositions$offsetTopDecoder);
-var _user$project$MouseEventPositions$currentTargetOffsetPositionDecoder = _user$project$MouseEventPositions$currentTargetDecoder(_user$project$MouseEventPositions$offsetPositionDecoder);
-var _user$project$MouseEventPositions$mousePositionDecoder = A3(
-	_elm_lang$core$Json_Decode$map2,
-	F2(
-		function (clientPosition, currentTarget) {
-			return {x: clientPosition.x - currentTarget.x, y: clientPosition.y - currentTarget.y};
-		}),
-	_user$project$MouseEventPositions$clientPositionDecoder,
-	_user$project$MouseEventPositions$currentTargetOffsetPositionDecoder);
-var _user$project$MouseEventPositions$onMouseMoveGetPosition = _user$project$MouseEventPositions$onMouseMove(_user$project$MouseEventPositions$mousePositionDecoder);
-var _user$project$View$tileNumberToHtmlKey = function (tile) {
+var _user$project$Aerial_View$tileNumberToHtmlKey = function (tile) {
 	return A2(
 		_elm_lang$core$String$join,
 		'-',
@@ -10326,11 +10324,11 @@ var _user$project$View$tileNumberToHtmlKey = function (tile) {
 			}
 		});
 };
-var _user$project$View$tileView = F2(
+var _user$project$Aerial_View$tileView = F2(
 	function (_p0, tileViewModel) {
 		var _p1 = _p0;
 		var _p2 = _p1.offset;
-		var url = A2(_user$project$SlippyTiles$slippyTileUrl, 'a', tileViewModel.tileNumber);
+		var url = A2(_user$project$Aerial_SlippyTiles$slippyTileUrl, 'a', tileViewModel.tileNumber);
 		var transform = A2(
 			_elm_lang$core$Basics_ops['++'],
 			'translate3d(',
@@ -10412,7 +10410,7 @@ var _user$project$View$tileView = F2(
 		var threeD = true;
 		return {
 			ctor: '_Tuple2',
-			_0: _user$project$View$tileNumberToHtmlKey(tileViewModel.tileNumber),
+			_0: _user$project$Aerial_View$tileNumberToHtmlKey(tileViewModel.tileNumber),
 			_1: A2(
 				_elm_lang$html$Html$img,
 				{
@@ -10431,16 +10429,16 @@ var _user$project$View$tileView = F2(
 				{ctor: '[]'})
 		};
 	});
-var _user$project$View$mapViewportView = F2(
+var _user$project$Aerial_View$mapViewportView = F2(
 	function (model, config) {
 		var tileOffset = A2(
 			_elm_lang$core$Maybe$withDefault,
 			{x: 0, y: 0},
 			_elm_community$maybe_extra$Maybe_Extra$join(
-				A2(_elm_lang$core$Maybe$map, _user$project$Model$getDraggingOffset, model.maybeMouseOver)));
-		var lowResTileViewModels2 = A2(_user$project$ViewModel$getTileViewModels, model, model.resolution / 4.0);
-		var lowResTileViewModels = A2(_user$project$ViewModel$getTileViewModels, model, model.resolution / 2.0);
-		var tileViewModels = A2(_user$project$ViewModel$getTileViewModels, model, model.resolution);
+				A2(_elm_lang$core$Maybe$map, _user$project$Aerial_Model$getDraggingOffset, model.maybeMouseOver)));
+		var lowResTileViewModels2 = A2(_user$project$Aerial_ViewModel$getTileViewModels, model, model.resolution / 4.0);
+		var lowResTileViewModels = A2(_user$project$Aerial_ViewModel$getTileViewModels, model, model.resolution / 2.0);
+		var tileViewModels = A2(_user$project$Aerial_ViewModel$getTileViewModels, model, model.resolution);
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -10450,39 +10448,39 @@ var _user$project$View$mapViewportView = F2(
 					ctor: '::',
 					_0: _user$project$MouseEvents$onMouseDown(
 						function (_p3) {
-							return _user$project$Types$MouseDown(
+							return _user$project$Aerial_Types$MouseDown(
 								_user$project$MouseEvents$relPos(_p3));
 						}),
 					_1: {
 						ctor: '::',
-						_0: _user$project$MouseEventPositions$onMouseMoveGetPosition(_user$project$Types$MouseMove),
+						_0: _user$project$Aerial_MouseEventPositions$onMouseMoveGetPosition(_user$project$Aerial_Types$MouseMove),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onMouseUp(_user$project$Types$MouseUp),
+							_0: _elm_lang$html$Html_Events$onMouseUp(_user$project$Aerial_Types$MouseUp),
 							_1: {
 								ctor: '::',
 								_0: _user$project$MouseEvents$onMouseLeave(
 									function (_p4) {
-										return _user$project$Types$MouseLeave(
+										return _user$project$Aerial_Types$MouseLeave(
 											_user$project$MouseEvents$relPos(_p4));
 									}),
 								_1: {
 									ctor: '::',
 									_0: _user$project$MouseEvents$onMouseEnter(
 										function (_p5) {
-											return _user$project$Types$MouseEnter(
+											return _user$project$Aerial_Types$MouseEnter(
 												_user$project$MouseEvents$relPos(_p5));
 										}),
 									_1: {
 										ctor: '::',
 										_0: _user$project$MouseEvents$onClick(
 											function (_p6) {
-												return _user$project$Types$MouseClickEvent(
+												return _user$project$Aerial_Types$PrivateMouseClick(
 													_user$project$MouseEvents$relPos(_p6));
 											}),
 										_1: {
 											ctor: '::',
-											_0: _user$project$MouseWheel$onMouseWheel(_user$project$Types$MouseWheel),
+											_0: _user$project$Aerial_MouseWheel$onMouseWheel(_user$project$Aerial_Types$MouseWheel),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$style(
@@ -10545,38 +10543,38 @@ var _user$project$View$mapViewportView = F2(
 						_elm_lang$core$Basics_ops['++'],
 						A2(
 							_elm_lang$core$List$map,
-							_user$project$View$tileView(
+							_user$project$Aerial_View$tileView(
 								{model: model, offset: tileOffset, z: 10}),
 							tileViewModels),
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							A2(
 								_elm_lang$core$List$map,
-								_user$project$View$tileView(
+								_user$project$Aerial_View$tileView(
 									{model: model, offset: tileOffset, z: 2}),
 								lowResTileViewModels),
 							A2(
 								_elm_lang$core$List$map,
-								_user$project$View$tileView(
+								_user$project$Aerial_View$tileView(
 									{model: model, offset: tileOffset, z: 1}),
 								lowResTileViewModels2)))),
 				_1: {
 					ctor: '::',
-					_0: A2(_elm_lang$html$Html$map, _user$project$Types$ParentMsg, config.pluginLayerView),
+					_0: A2(_elm_lang$html$Html$map, _user$project$Aerial_Types$ParentMsg, config.pluginLayerView),
 					_1: {ctor: '[]'}
 				}
 			});
 	});
-var _user$project$View$view = F2(
+var _user$project$Aerial_View$view = F2(
 	function (config, model) {
-		var tileNumber = A2(_user$project$SlippyTiles$latLngToSlippyTileNumber, model.zoom, model.latLng);
-		var url = A2(_user$project$SlippyTiles$slippyTileUrl, 'a', tileNumber);
+		var tileNumber = A2(_user$project$Aerial_SlippyTiles$latLngToSlippyTileNumber, model.zoom, model.latLng);
+		var url = A2(_user$project$Aerial_SlippyTiles$slippyTileUrl, 'a', tileNumber);
 		return A2(
 			_elm_lang$html$Html$div,
 			{ctor: '[]'},
 			{
 				ctor: '::',
-				_0: A2(_user$project$View$mapViewportView, model, config),
+				_0: A2(_user$project$Aerial_View$mapViewportView, model, config),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -10586,7 +10584,7 @@ var _user$project$View$view = F2(
 							_0: _elm_lang$html$Html_Attributes$type_('number'),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$UpdateLat),
+								_0: _elm_lang$html$Html_Events$onInput(_user$project$Aerial_Types$UpdateLat),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$html$Html_Attributes$value(
@@ -10605,7 +10603,7 @@ var _user$project$View$view = F2(
 								_0: _elm_lang$html$Html_Attributes$type_('number'),
 								_1: {
 									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$UpdateLng),
+									_0: _elm_lang$html$Html_Events$onInput(_user$project$Aerial_Types$UpdateLng),
 									_1: {
 										ctor: '::',
 										_0: _elm_lang$html$Html_Attributes$value(
@@ -10628,7 +10626,7 @@ var _user$project$View$view = F2(
 											_elm_lang$core$Basics$toString(model.zoom)),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Events$onInput(_user$project$Types$UpdateZoom),
+											_0: _elm_lang$html$Html_Events$onInput(_user$project$Aerial_Types$UpdateZoom),
 											_1: {ctor: '[]'}
 										}
 									}
@@ -10655,58 +10653,63 @@ var _user$project$View$view = F2(
 				}
 			});
 	});
-var _user$project$View$Config = function (a) {
+var _user$project$Aerial_View$Config = function (a) {
 	return {pluginLayerView: a};
 };
+var _user$project$Demo$updateWithAerialOutMsg = F2(
+	function (outMsg, model) {
+		var _p0 = outMsg;
+		return model;
+	});
+var _user$project$Demo$init = {prop1: 'hello', prop2: 2, aerialModel: _user$project$Aerial_Model$init, addPinPlugin: _user$project$AddPinPlugin$init};
+var _user$project$Demo$setAddPinPlugin = F2(
+	function (addPinPlugin, model) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{addPinPlugin: addPinPlugin});
+	});
+var _user$project$Demo$setAerialModel = F2(
+	function (aerialModel, model) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{aerialModel: aerialModel});
+	});
 var _user$project$Demo$update = F2(
 	function (msg, model) {
-		update:
-		while (true) {
-			var _p0 = msg;
-			if (_p0.ctor === 'AerialMsg') {
-				var _p1 = A2(_user$project$Update$update, _p0._0, model.aerialModel);
-				var aerialModel = _p1._0;
-				var maybeAerialOutMsg = _p1._1;
-				var model2 = _elm_lang$core$Native_Utils.update(
-					model,
-					{aerialModel: aerialModel});
-				var _p2 = maybeAerialOutMsg;
-				if (_p2.ctor === 'Just') {
-					var _p3 = _p2._0;
-					if (_p3.ctor === 'SelfMsg') {
-						var _v3 = _p3._0,
-							_v4 = model2;
-						msg = _v3;
-						model = _v4;
-						continue update;
-					} else {
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							model,
-							{ctor: '[]'});
-					}
-				} else {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						model2,
-						{ctor: '[]'});
-				}
-			} else {
+		var _p1 = msg;
+		if (_p1.ctor === 'AerialMsg') {
+			return function (_p2) {
+				var _p3 = _p2;
 				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							addPinPlugin: A3(_user$project$AddPinPlugin$update, _p0._0, model.addPinPlugin, model.aerialModel)
-						}),
-					{ctor: '[]'});
-			}
+					_user$project$Demo$handleAerialReturn,
+					_p3._1,
+					A2(_user$project$Demo$setAerialModel, _p3._0, model));
+			}(
+				A2(_user$project$Aerial_Update$update, _p1._0, model.aerialModel));
+		} else {
+			return _elm_lang$core$Native_Utils.update(
+				model,
+				{
+					addPinPlugin: A3(_user$project$AddPinPlugin$update, _p1._0, model.addPinPlugin, model.aerialModel)
+				});
 		}
 	});
-var _user$project$Demo$init = A2(
-	_elm_lang$core$Platform_Cmd_ops['!'],
-	{prop1: 'hello', prop2: 2, aerialModel: _user$project$Model$init, addPinPlugin: _user$project$AddPinPlugin$init},
-	{ctor: '[]'});
+var _user$project$Demo$handleAerialReturn = F2(
+	function ($return, model) {
+		var _p4 = $return;
+		switch (_p4.ctor) {
+			case 'OutMsg':
+				var _p5 = _p4._0;
+				return A2(
+					_user$project$Demo$setAddPinPlugin,
+					A3(_user$project$AddPinPlugin$updateWithAerialOutMsg, _p5, model.aerialModel, model.addPinPlugin),
+					A2(_user$project$Demo$updateWithAerialOutMsg, _p5, model));
+			case 'SelfMsg':
+				return A2(_user$project$Demo$update, _p4._0, model);
+			default:
+				return model;
+		}
+	});
 var _user$project$Demo$Model = F4(
 	function (a, b, c, d) {
 		return {prop1: a, prop2: b, aerialModel: c, addPinPlugin: d};
@@ -10722,7 +10725,7 @@ var _user$project$Demo$view = function (model) {
 	var unMappedView = A2(_user$project$AddPinPlugin$view, model.addPinPlugin, aerialModel);
 	var mappedView = A2(_elm_lang$html$Html$map, _user$project$Demo$AddPinPluginMsg, unMappedView);
 	var aerialViewConfig = {pluginLayerView: mappedView};
-	var aerialView = A2(_user$project$View$view, aerialViewConfig, model.aerialModel);
+	var aerialView = A2(_user$project$Aerial_View$view, aerialViewConfig, model.aerialModel);
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -10732,15 +10735,8 @@ var _user$project$Demo$view = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$main = _elm_lang$html$Html$program(
-	{
-		view: _user$project$Demo$view,
-		update: _user$project$Demo$update,
-		subscriptions: function (_p0) {
-			return _elm_lang$core$Platform_Sub$none;
-		},
-		init: _user$project$Demo$init
-	})();
+var _user$project$Main$main = _elm_lang$html$Html$beginnerProgram(
+	{view: _user$project$Demo$view, update: _user$project$Demo$update, model: _user$project$Demo$init})();
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {

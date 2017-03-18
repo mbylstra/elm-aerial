@@ -1,9 +1,9 @@
-module Types exposing (Msg(..), OutMsg(..), Model, MouseOverState, Return(..))
+module Aerial.Types exposing (Msg(..), OutMsg(..), Model, MouseOverState, Return(..))
 
-import Geo exposing (LatLng)
 import Mouse
-import VectorMath exposing (Point2DInt, Vector2DInt)
-import MouseWheel exposing (MouseWheelEvent)
+import Aerial.Geo exposing (LatLng)
+import Aerial.VectorMath exposing (Point2DInt, Vector2DInt)
+import Aerial.MouseWheel exposing (MouseWheelEvent)
 
 
 type alias Model =

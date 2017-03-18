@@ -1,11 +1,11 @@
-module ViewModel exposing (..)
+module Aerial.ViewModel exposing (..)
 
-import Model exposing (getViewportBottomRightWorldPixel, getViewportTopLeftWorldPixel, worldPixelPointToViewportPoint)
-import SlippyTiles exposing (SlippyTileNumber, getTileTopLeftWorldPixelPoint, worldPixelPointToSlippyTileNumber)
-import Tiles exposing (getTileSize, getTileViewZoom)
-import Types exposing (..)
-import Util exposing (cartesianProduct)
-import VectorMath exposing (Point2DInt, timesFloatToInt)
+import Aerial.Model exposing (getViewportBottomRightWorldPixel, getViewportTopLeftWorldPixel, worldPixelPointToViewportPoint)
+import Aerial.SlippyTiles exposing (SlippyTileNumber, getTileTopLeftWorldPixelPoint, worldPixelPointToSlippyTileNumber)
+import Aerial.Tiles exposing (getTileSize, getTileViewZoom)
+import Aerial.Types exposing (..)
+import Aerial.Util exposing (cartesianProduct)
+import Aerial.VectorMath exposing (Point2DInt, timesFloatToInt)
 
 
 type alias TileViewModel =
@@ -24,7 +24,7 @@ getTileViewModels model resolution =
 
         worldWidthInTiles =
             -- Debug.log "tileView worldWidthInTiles" <|
-            Tiles.getWorldWidthInTiles zoom
+            Aerial.Tiles.getWorldWidthInTiles zoom
 
         viewportTopLeftWorldPixel =
             -- Debug.log "vieportTopLeftWOrldPixle" <|
@@ -127,4 +127,4 @@ toTileViewModel { topLeftTileViewportPoint, topLeftTileNumber, tileSize, worldWi
 
 getTileViewTileSize : Float -> Int
 getTileViewTileSize resolution =
-    (toFloat SlippyTiles.tileSize) / resolution |> floor
+    (toFloat Aerial.SlippyTiles.tileSize) / resolution |> floor

@@ -1,4 +1,4 @@
-module Styles exposing (..)
+module Aerial.Styles exposing (..)
 
 
 styles : String

@@ -8,19 +8,15 @@ import Html exposing (..)
 
 -- import Html.Attributes exposing (..)
 
-import Model as AerialModel exposing (viewportPointToLatLng)
-import Types as AerialTypes
-import Update as AerialUpdate
-import View as AerialView
+import Aerial.Model exposing (viewportPointToLatLng)
+import Aerial.Types
+import Aerial.Update
+import Aerial.View
 
 
 -- import Mouse
 -- import Html.Events exposing (..)
 
-import Model as AerialModel exposing (viewportPointToLatLng)
-import Types as AerialTypes
-import Update as AerialUpdate
-import View as AerialView
 import AddPinPlugin
 
 
@@ -31,13 +27,13 @@ type alias Model =
     { prop1 : String
     , prop2 : Int
     , aerialModel :
-        AerialTypes.Model
+        Aerial.Types.Model
         -- , markers : List LatLng
     , addPinPlugin : AddPinPlugin.Model
     }
 
 
-setAerialModel : AerialTypes.Model -> Model -> Model
+setAerialModel : Aerial.Types.Model -> Model -> Model
 setAerialModel aerialModel model =
     { model | aerialModel = aerialModel }
 
@@ -52,7 +48,7 @@ init =
     { prop1 = "hello"
     , prop2 = 2
     , aerialModel =
-        AerialModel.init
+        Aerial.Model.init
     , addPinPlugin = AddPinPlugin.init
     }
 
@@ -62,7 +58,7 @@ init =
 
 
 type Msg
-    = AerialMsg (AerialTypes.Msg Msg)
+    = AerialMsg (Aerial.Types.Msg Msg)
     | AddPinPluginMsg AddPinPlugin.Msg
 
 
@@ -70,7 +66,7 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         AerialMsg aerialMsg ->
-            AerialUpdate.update aerialMsg model.aerialModel
+            Aerial.Update.update aerialMsg model.aerialModel
                 |> \( aerialModel, aerialReturn ) ->
                     model
                         |> setAerialModel aerialModel
@@ -80,25 +76,25 @@ update msg model =
             { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin model.aerialModel }
 
 
-handleAerialReturn : AerialTypes.Return Msg -> Model -> Model
+handleAerialReturn : Aerial.Types.Return Msg -> Model -> Model
 handleAerialReturn return model =
     case return of
-        AerialTypes.OutMsg outMsg ->
+        Aerial.Types.OutMsg outMsg ->
             model
                 |> updateWithAerialOutMsg outMsg
                 |> setAddPinPlugin (AddPinPlugin.updateWithAerialOutMsg outMsg model.aerialModel model.addPinPlugin)
 
-        AerialTypes.SelfMsg msg ->
+        Aerial.Types.SelfMsg msg ->
             update msg model
 
-        AerialTypes.ReturnNothing ->
+        Aerial.Types.ReturnNothing ->
             model
 
 
-updateWithAerialOutMsg : AerialTypes.OutMsg -> Model -> Model
+updateWithAerialOutMsg : Aerial.Types.OutMsg -> Model -> Model
 updateWithAerialOutMsg outMsg model =
     case outMsg of
-        AerialTypes.MouseClick position ->
+        Aerial.Types.MouseClick position ->
             model
 
 
@@ -123,7 +119,7 @@ view model =
             Html.map AddPinPluginMsg unMappedView
 
         -- So, we should be able to pass this to Config
-        aerialViewConfig : AerialView.Config Msg
+        aerialViewConfig : Aerial.View.Config Msg
         aerialViewConfig =
             { pluginLayerView = mappedView }
 
@@ -139,7 +135,7 @@ view model =
         -- AerialMsg
         -- Hmm, how do we go back the other way???
         aerialView =
-            (AerialView.view aerialViewConfig model.aerialModel)
+            (Aerial.View.view aerialViewConfig model.aerialModel)
     in
         div []
             [ Html.map AerialMsg <| aerialView

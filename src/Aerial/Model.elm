@@ -1,11 +1,11 @@
-module Model exposing (..)
+module Aerial.Model exposing (..)
 
-import Geo exposing (LatLng)
-import SlippyTiles exposing (WorldMapPixelPoint, latLngToWorldPixelPoint, worldPixelPointToLatLng)
-import Tiles
-import Types exposing (..)
-import Util exposing (fmod)
-import VectorMath exposing (Point2DInt, RectangleInt, Vector2DInt, difference, isIn, timesFloatToInt)
+import Aerial.Geo exposing (LatLng)
+import Aerial.SlippyTiles exposing (WorldMapPixelPoint, latLngToWorldPixelPoint, worldPixelPointToLatLng)
+import Aerial.Tiles
+import Aerial.Types exposing (..)
+import Aerial.Util exposing (fmod)
+import Aerial.VectorMath exposing (Point2DInt, RectangleInt, Vector2DInt, difference, isIn, timesFloatToInt)
 
 
 initLatLng : LatLng
@@ -47,7 +47,7 @@ getDraggingOffset mouseOverState =
         |> Maybe.map
             (.startPosition
                 >> difference mouseOverState.position
-                >> VectorMath.negate
+                >> Aerial.VectorMath.negate
             )
 
 
@@ -90,7 +90,7 @@ getViewportCenter model =
 -}
 getWorldWidthInTiles : Model -> Int
 getWorldWidthInTiles model =
-    Tiles.getWorldWidthInTiles model.zoom
+    Aerial.Tiles.getWorldWidthInTiles model.zoom
 
 
 {-| this is the same if the resolution is zero
@@ -159,12 +159,12 @@ worldPixelPointToViewportPoint worldPixelPoint model zoom resolution =
             }
     in
         -- These need to get scaled up by resolution ro something?
-        VectorMath.scalarMultiplyByFloat vector (1.0 / resolution)
+        Aerial.VectorMath.scalarMultiplyByFloat vector (1.0 / resolution)
 
 
 getViewportCenterOffset : Model -> Point2DInt -> Vector2DInt
 getViewportCenterOffset model viewportPoint =
-    VectorMath.difference (getViewportCenter model) viewportPoint
+    Aerial.VectorMath.difference (getViewportCenter model) viewportPoint
 
 
 zoomAtCursor : Model -> Bool -> Model
@@ -201,9 +201,9 @@ zoomAtCursor model zoomIn =
                             -- worked, and now they both work!
                             -- Debug.log "panVector" <|
                             if zoomIn then
-                                VectorMath.negate viewportCenterOffset
+                                Aerial.VectorMath.negate viewportCenterOffset
                             else
-                                VectorMath.scalarMultiply viewportCenterOffset (2 ^ zoomDelta)
+                                Aerial.VectorMath.scalarMultiply viewportCenterOffset (2 ^ zoomDelta)
                     in
                         -- Debug.log "model3" <|
                         panByPixels newModel panVector
@@ -223,7 +223,7 @@ panByPixels model vector =
             latLngToWorldPixelPoint model.zoom model.latLng
 
         newMapCenter =
-            VectorMath.minusVector { x = mapCenter.x, y = mapCenter.y } vector
+            Aerial.VectorMath.minusVector { x = mapCenter.x, y = mapCenter.y } vector
 
         newLatLng =
             worldPixelPointToLatLng { x = newMapCenter.x, y = newMapCenter.y, zoom = model.zoom }

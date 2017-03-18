@@ -1,4 +1,4 @@
-module Geo exposing (..)
+module Aerial.Geo exposing (..)
 
 
 type alias LatLng =

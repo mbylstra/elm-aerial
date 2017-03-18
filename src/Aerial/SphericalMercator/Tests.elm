@@ -1,4 +1,4 @@
-module SphericalMercator.Tests exposing (..)
+module Aerial.SphericalMercator.Tests exposing (..)
 
 import Test exposing (..)
 import Expect

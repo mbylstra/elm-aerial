@@ -1,4 +1,4 @@
-module MouseEventPositions exposing (..)
+module Aerial.MouseEventPositions exposing (..)
 
 import Json.Decode as Decode exposing (field, at, andThen, Decoder)
 import Html.Events exposing (on)

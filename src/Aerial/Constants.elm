@@ -1,4 +1,4 @@
-module Constants exposing (..)
+module Aerial.Constants exposing (..)
 
 {-| in meters on the equator
 -}

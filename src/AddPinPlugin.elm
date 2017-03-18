@@ -7,15 +7,15 @@ import Html.Events exposing (..)
 
 -- Notice that there are no requirements from Demo.elm. This is important for it to be a plugin!
 
-import Geo exposing (LatLng)
+import Aerial.Geo exposing (LatLng)
 import Json.Decode as Json
-import Model as AerialModel exposing (latLngToViewportPoint, viewportPointToLatLng)
-import Types as AerialTypes
+import Aerial.Model exposing (latLngToViewportPoint, viewportPointToLatLng)
+import Aerial.Types
 
 
 -- import Update as AerialUpdate
 
-import VectorMath exposing (Point2DInt)
+import Aerial.VectorMath exposing (Point2DInt)
 
 
 -- import View as AerialView
@@ -36,7 +36,7 @@ type Msg
     = MarkerMouseClick
 
 
-update : Msg -> Model -> AerialTypes.Model -> Model
+update : Msg -> Model -> Aerial.Types.Model -> Model
 update msg model aerialModel =
     case msg of
         MarkerMouseClick ->
@@ -47,10 +47,10 @@ update msg model aerialModel =
                 model
 
 
-updateWithAerialOutMsg : AerialTypes.OutMsg -> AerialTypes.Model -> Model -> Model
+updateWithAerialOutMsg : Aerial.Types.OutMsg -> Aerial.Types.Model -> Model -> Model
 updateWithAerialOutMsg outMsg aerialModel model =
     case outMsg of
-        AerialTypes.MouseClick position ->
+        Aerial.Types.MouseClick position ->
             -- this just gives the position, but we can give position + aerialModel
             -- to get the latlng
             -- then we add it to the list of lat lngs.. pretty easy!
@@ -71,7 +71,7 @@ updateWithAerialOutMsg outMsg aerialModel model =
 -- view : Model -> AerialTypes.Model -> Html Msg
 
 
-view : Model -> AerialTypes.Model -> Html Msg
+view : Model -> Aerial.Types.Model -> Html Msg
 view model aerialModel =
     let
         -- _ =

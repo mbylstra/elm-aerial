@@ -1,8 +1,8 @@
-module Update exposing (..)
+module Aerial.Update exposing (..)
 
-import Model exposing (cleanLat, cleanLatLng, cleanLng, getViewportCenter, isInViewport, setZoom, viewportPointToLatLng, zoomAtCursor)
-import Types exposing (Model, Msg(..), Return(OutMsg), OutMsg(..), Return, Return(ReturnNothing), Return(SelfMsg))
-import VectorMath exposing (difference)
+import Aerial.Model exposing (cleanLat, cleanLatLng, cleanLng, getViewportCenter, isInViewport, setZoom, viewportPointToLatLng, zoomAtCursor)
+import Aerial.Types exposing (Model, Msg(..), Return(OutMsg), OutMsg(..), Return, Return(ReturnNothing), Return(SelfMsg))
+import Aerial.VectorMath exposing (difference)
 
 
 update : Msg parentMsg -> Model -> ( Model, Return parentMsg )
@@ -78,7 +78,7 @@ update msg model =
                                             getViewportCenter model
 
                                         newCenterLatLng =
-                                            VectorMath.minusVector viewportCenter mouseMovedVector
+                                            Aerial.VectorMath.minusVector viewportCenter mouseMovedVector
                                                 |> viewportPointToLatLng model
                                                 |> cleanLatLng
 

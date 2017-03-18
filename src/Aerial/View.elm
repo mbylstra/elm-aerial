@@ -1,4 +1,4 @@
-module View exposing (..)
+module Aerial.View exposing (..)
 
 -- import Geo exposing (LatLng)
 
@@ -7,14 +7,14 @@ import Html.Attributes exposing (class, draggable, src, style, type_, value)
 import Html.Events exposing (onInput, onMouseLeave, onMouseUp)
 import Html.Keyed
 import Maybe.Extra
-import Model exposing (getDraggingOffset, latLngToViewportPoint)
+import Aerial.Model exposing (getDraggingOffset, latLngToViewportPoint)
 import MouseEvents exposing (onMouseEnter, relPos)
-import MouseWheel
-import SlippyTiles exposing (SlippyTileNumber, latLngToSlippyTileNumber, slippyTileUrl)
-import Types exposing (..)
-import VectorMath exposing (Point2DInt, Vector2DInt)
-import ViewModel exposing (TileViewModel, getTileViewModels)
-import MouseEventPositions exposing (onMouseMoveGetPosition)
+import Aerial.MouseWheel
+import Aerial.SlippyTiles exposing (SlippyTileNumber, latLngToSlippyTileNumber, slippyTileUrl)
+import Aerial.Types exposing (..)
+import Aerial.VectorMath exposing (Point2DInt, Vector2DInt)
+import Aerial.ViewModel exposing (TileViewModel, getTileViewModels)
+import Aerial.MouseEventPositions exposing (onMouseMoveGetPosition)
 
 
 type alias Config customMsg =
@@ -87,7 +87,7 @@ mapViewportView model config =
             , MouseEvents.onMouseLeave (MouseEvents.relPos >> MouseLeave)
             , MouseEvents.onMouseEnter (MouseEvents.relPos >> MouseEnter)
             , MouseEvents.onClick (MouseEvents.relPos >> PrivateMouseClick)
-            , MouseWheel.onMouseWheel (MouseWheel)
+            , Aerial.MouseWheel.onMouseWheel (MouseWheel)
             , style
                 [ ( "position", "relative" )
                 , ( "overflow", "hidden" )

@@ -1,6 +1,6 @@
-module SphericalMercator exposing (..)
+module Aerial.SphericalMercator exposing (..)
 
-import Util exposing (toRadians, ln, circumference, toDegrees)
+import Aerial.Util exposing (toRadians, ln, circumference, toDegrees)
 
 
 {-| in meters on the equator

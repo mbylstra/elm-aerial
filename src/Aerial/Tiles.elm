@@ -1,9 +1,9 @@
-module Tiles exposing (..)
+module Aerial.Tiles exposing (..)
 
 {-| This is the width in the tiles at 1:1 resolution.
 -}
 
-import SlippyTiles
+import Aerial.SlippyTiles
 
 
 getWorldWidthInTiles : Int -> Int
@@ -18,4 +18,4 @@ getTileViewZoom zoom resolution =
 
 getTileSize : Float -> Int
 getTileSize resolution =
-    (toFloat SlippyTiles.tileSize) / resolution |> floor
+    (toFloat Aerial.SlippyTiles.tileSize) / resolution |> floor

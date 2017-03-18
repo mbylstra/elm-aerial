@@ -1,4 +1,4 @@
-module Util exposing (..)
+module Aerial.Util exposing (..)
 
 
 cartesianProduct : List a -> List b -> List ( a, b )

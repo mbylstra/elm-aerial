@@ -1,4 +1,4 @@
-module MouseWheel exposing (..)
+module Aerial.MouseWheel exposing (..)
 
 import Json.Decode as Decode exposing (field)
 import Html.Events exposing (onWithOptions)

@@ -1,4 +1,4 @@
-module VectorMath exposing (..)
+module Aerial.VectorMath exposing (..)
 
 import Mouse
 

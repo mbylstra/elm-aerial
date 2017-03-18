@@ -1,4 +1,4 @@
-module SlippyTiles.Tests exposing (..)
+module Aerial.SlippyTiles.Tests exposing (..)
 
 import Test exposing (..)
 import Expect
