@@ -3,6 +3,7 @@ module Demo exposing (Model, Msg, init, update, view)
 -- import Geo exposing (LatLng)
 
 import AddPinPlugin
+import Earthquakes
 import Html exposing (..)
 
 
@@ -29,7 +30,9 @@ type alias Model =
     , aerialModel :
         Aerial.Types.Model
         -- , markers : List LatLng
-    , addPinPlugin : AddPinPlugin.Model
+    , addPinPlugin :
+        AddPinPlugin.Model
+    , earthquakes : Earthquakes.Model
     }
 
 
@@ -43,14 +46,20 @@ setAddPinPlugin addPinPlugin model =
     { model | addPinPlugin = addPinPlugin }
 
 
-init : Model
+init : ( Model, Cmd Msg )
 init =
-    { prop1 = "hello"
-    , prop2 = 2
-    , aerialModel =
-        Aerial.Model.init
-    , addPinPlugin = AddPinPlugin.init
-    }
+    let
+        ( earthquakes, earthquakesMsg ) =
+            Earthquakes.init
+    in
+        { prop1 = "hello"
+        , prop2 = 2
+        , aerialModel =
+            Aerial.Model.init
+        , addPinPlugin = AddPinPlugin.init
+        , earthquakes = earthquakes
+        }
+            ! [ Cmd.map EarthquakesMsg earthquakesMsg ]
 
 
 
@@ -60,6 +69,7 @@ init =
 type Msg
     = AerialMsg (Aerial.Types.Msg Msg)
     | AddPinPluginMsg AddPinPlugin.Msg
+    | EarthquakesMsg Earthquakes.Msg
 
 
 update : Msg -> Model -> Model
@@ -74,6 +84,9 @@ update msg model =
 
         AddPinPluginMsg addPinPluginMsg ->
             { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin model.aerialModel }
+
+        EarthquakesMsg earthquakesMsg ->
+            { model | earthquakes = Earthquakes.update earthquakesMsg model.earthquakes }
 
 
 handleAerialReturn : Aerial.Types.Return Msg -> Model -> Model
@@ -101,27 +114,16 @@ updateWithAerialOutMsg outMsg model =
 view : Model -> Html Msg
 view model =
     let
-        aerialModel =
-            model.aerialModel
-
-        -- myButton : Html (AerialTypes.Msg Msg)
-        -- myButton =
-        --     button [ onClick (AerialTypes.CustomMsg ButtonClicked) ] [ text "Button" ]
-        -- unMappedView : AerialTypes.Model -> Html AddPinPlugin.Msg
-        unMappedView : Html AddPinPlugin.Msg
-        unMappedView =
-            AddPinPlugin.view model.addPinPlugin aerialModel
-
-        -- mappedView : AerialTypes.Model -> Html Msg
-        mappedView : Html Msg
-        mappedView =
-            -- Html.map AddPinPluginMsg (unMappedView model)
-            Html.map AddPinPluginMsg unMappedView
+        pluginLayerView =
+            -- Html.map AddPinPluginMsg <|
+            Html.map EarthquakesMsg <|
+                --AddPinPlugin.view model.addPinPlugin aerialModel
+                Earthquakes.view model.aerialModel model.earthquakes
 
         -- So, we should be able to pass this to Config
         aerialViewConfig : Aerial.View.Config Msg
         aerialViewConfig =
-            { pluginLayerView = mappedView }
+            { pluginLayerView = pluginLayerView }
 
         -- { -- markerView = AddPinPlugin.markerView
         --   -- , markers = model.markers

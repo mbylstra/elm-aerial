@@ -1,7 +1,11 @@
 module Earthquakes exposing (..)
 
+import Aerial.Geo exposing (LatLng)
+import Aerial.Markers exposing (markerHolder, simpleMarker)
+import Aerial.Types
 import GeoJson exposing (FeatureObject, GeoJson, GeoJsonObject(FeatureCollection))
-import Html exposing (Html, div, span)
+import Html exposing (Html, div, span, text)
+import Html.Attributes exposing (style)
 import Http
 import Json.Decode as Json
 import RemoteData exposing (RemoteData(Loading), RemoteData(Success), WebData)
@@ -10,6 +14,21 @@ import RemoteData exposing (RemoteData(Loading), RemoteData(Success), WebData)
 urlPastWeek4pt5GeoJson : String
 urlPastWeek4pt5GeoJson =
     "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson"
+
+
+urlPastDay2pt5GeoJson : String
+urlPastDay2pt5GeoJson =
+    "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson"
+
+
+urlPastWeek2pt5GeoJson : String
+urlPastWeek2pt5GeoJson =
+    "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson"
+
+
+urlPastMonth2pt5GeoJson : String
+urlPastMonth2pt5GeoJson =
+    "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month.geojson"
 
 
 type alias Model =
@@ -27,7 +46,10 @@ empty =
 
 getGeojson : Cmd Msg
 getGeojson =
-    Http.get urlPastWeek4pt5GeoJson GeoJson.decoder
+    --Http.get urlPastWeek4pt5GeoJson GeoJson.decoder
+    -- Http.get urlPastDay2pt5GeoJson GeoJson.decoder
+    -- Http.get urlPastWeek2pt5GeoJson GeoJson.decoder
+    Http.get urlPastMonth2pt5GeoJson GeoJson.decoder
         |> RemoteData.sendRequest
         |> Cmd.map DataResponse
 
@@ -46,40 +68,52 @@ update msg model =
             { model | geojson = response }
 
 
-view : Model -> Html Msg
-view model =
+view : Aerial.Types.Model -> Model -> Html Msg
+view aerialModel model =
     case model.geojson of
         Success geojson ->
-            viewData geojson
+            viewData aerialModel geojson
 
         _ ->
             empty
 
 
-viewData : GeoJson -> Html msg
-viewData ( geojson, _ ) =
+viewData : Aerial.Types.Model -> GeoJson -> Html msg
+viewData aerialModel ( geojson, _ ) =
     case geojson of
         FeatureCollection features ->
             div []
-                (List.map viewFeature features)
+                (List.map (viewFeature aerialModel) features)
 
         _ ->
             empty
 
 
-viewFeature : FeatureObject -> Html msg
-viewFeature feature =
-    Json.decodeValue earthquakePropertiesDecoder feature.properties
-        |> Result.map
-            (\{ magnitude } ->
-                div [] []
-            )
-        |> Result.withDefault empty
+viewFeature : Aerial.Types.Model -> FeatureObject -> Html msg
+viewFeature aerialModel feature =
+    case feature.geometry of
+        Just (GeoJson.Point position) ->
+            Json.decodeValue earthquakePropertiesDecoder feature.properties
+                |> Result.map
+                    (\{ magnitude } ->
+                        position
+                            |> positionToLatLng
+                            |> markerHolder (earthquakeMarker magnitude) aerialModel
+                    )
+                |> Result.withDefault empty
+
+        _ ->
+            empty
 
 
 earthquakePropertiesDecoder : Json.Decoder { magnitude : Float }
 earthquakePropertiesDecoder =
     Json.field "mag" Json.float |> Json.map (\magnitude -> { magnitude = magnitude })
+
+
+positionToLatLng : GeoJson.Position -> LatLng
+positionToLatLng ( lng, lat, _ ) =
+    { lat = lat, lng = lng }
 
 
 
@@ -111,3 +145,43 @@ earthquakePropertiesDecoder =
 -- "type": "earthquake",
 -- "title": "M 4.8 - 23km N of Kabanjahe, Indonesia"
 -- },
+
+
+earthquakeMarker : Float -> Html msg
+earthquakeMarker magnitude =
+    let
+        radius =
+            magnitudeToPixelRadius magnitude
+
+        width =
+            radius * 2
+
+        top =
+            -radius
+
+        left =
+            -radius
+    in
+        div
+            [ style
+                [ ( "width", toString width ++ "px" )
+                , ( "height", toString width ++ "px" )
+                , ( "position", "absolute" )
+                , ( "top", toString top ++ "px" )
+                , ( "left", toString left ++ "px" )
+                , ( "border", "1px solid black" )
+                , ( "border-radius", toString radius ++ "px" )
+                , ( "background-color", "rgba(0,0,0,0.1)" )
+                , ( "z-index", "10" )
+                ]
+            ]
+            [ text <| toString magnitude ]
+
+
+magnitudeToPixelRadius : Float -> Int
+magnitudeToPixelRadius magnitude =
+    let
+        linearValue =
+            10 ^ (magnitude - 1)
+    in
+        sqrt (linearValue / pi) |> round
