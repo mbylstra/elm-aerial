@@ -31,12 +31,22 @@ urlPastMonth2pt5GeoJson =
     "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_month.geojson"
 
 
+type alias Earthquake =
+    { latLng : LatLng
+    , time : Int
+    , magnitude : Float
+    }
+
+
 type alias Model =
-    { geojson : WebData GeoJson }
+    { earthquakes :
+        WebData (List Earthquake)
+        -- , currentTime : Int
+    }
 
 
 type Msg
-    = DataResponse (WebData GeoJson)
+    = DataResponse (WebData (List Earthquake))
 
 
 empty : Html msg
@@ -44,19 +54,24 @@ empty =
     span [] []
 
 
+decoder : Json.Decoder (List Earthquake)
+decoder =
+    GeoJson.decoder |> Json.map extractEarthquakes
+
+
 getGeojson : Cmd Msg
 getGeojson =
     --Http.get urlPastWeek4pt5GeoJson GeoJson.decoder
     -- Http.get urlPastDay2pt5GeoJson GeoJson.decoder
     -- Http.get urlPastWeek2pt5GeoJson GeoJson.decoder
-    Http.get urlPastMonth2pt5GeoJson GeoJson.decoder
+    Http.get urlPastMonth2pt5GeoJson decoder
         |> RemoteData.sendRequest
         |> Cmd.map DataResponse
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { geojson = Loading }
+    ( { earthquakes = Loading }
     , getGeojson
     )
 
@@ -64,51 +79,77 @@ init =
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        DataResponse response ->
-            { model | geojson = response }
+        DataResponse earthquakes ->
+            { model | earthquakes = earthquakes }
 
 
 view : Aerial.Types.Model -> Model -> Html Msg
 view aerialModel model =
-    case model.geojson of
-        Success geojson ->
-            viewData aerialModel geojson
+    case model.earthquakes of
+        Success earthquakes ->
+            viewData aerialModel earthquakes
 
         _ ->
             empty
 
 
-viewData : Aerial.Types.Model -> GeoJson -> Html msg
-viewData aerialModel ( geojson, _ ) =
+viewData : Aerial.Types.Model -> List Earthquake -> Html msg
+viewData aerialModel earthquakes =
+    div [] (List.map (earthquakeView aerialModel) earthquakes)
+
+
+earthquakeView : Aerial.Types.Model -> Earthquake -> Html msg
+earthquakeView aerialModel earthquake =
+    markerHolder
+        (earthquakeMarker earthquake.magnitude)
+        aerialModel
+        earthquake.latLng
+
+
+
+-- earthquakeDecoder
+
+
+extractEarthquakes : GeoJson -> List Earthquake
+extractEarthquakes ( geojson, _ ) =
     case geojson of
         FeatureCollection features ->
-            div []
-                (List.map (viewFeature aerialModel) features)
+            List.map extractEarthquakeFromFeature features
+                |> List.filterMap (identity)
 
         _ ->
-            empty
+            []
 
 
-viewFeature : Aerial.Types.Model -> FeatureObject -> Html msg
-viewFeature aerialModel feature =
+extractEarthquakeFromFeature : FeatureObject -> Maybe Earthquake
+extractEarthquakeFromFeature feature =
     case feature.geometry of
         Just (GeoJson.Point position) ->
             Json.decodeValue earthquakePropertiesDecoder feature.properties
                 |> Result.map
-                    (\{ magnitude } ->
-                        position
-                            |> positionToLatLng
-                            |> markerHolder (earthquakeMarker magnitude) aerialModel
+                    (\{ magnitude, time } ->
+                        { latLng = positionToLatLng position
+                        , time = time
+                        , magnitude = magnitude
+                        }
                     )
-                |> Result.withDefault empty
+                |> Result.toMaybe
 
         _ ->
-            empty
+            Nothing
 
 
-earthquakePropertiesDecoder : Json.Decoder { magnitude : Float }
+type alias EarthquakeProperties =
+    { magnitude : Float
+    , time : Int
+    }
+
+
+earthquakePropertiesDecoder : Json.Decoder EarthquakeProperties
 earthquakePropertiesDecoder =
-    Json.field "mag" Json.float |> Json.map (\magnitude -> { magnitude = magnitude })
+    Json.map2 EarthquakeProperties
+        (Json.field "mag" Json.float)
+        (Json.field "time" Json.int)
 
 
 positionToLatLng : GeoJson.Position -> LatLng
