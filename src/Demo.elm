@@ -1,8 +1,12 @@
-module Demo exposing (Model, Msg, init, update, view)
+module Demo exposing (Model, Msg, init, update, view, subscriptions)
 
 -- import Geo exposing (LatLng)
 
 import AddPinPlugin
+import Aerial.Model exposing (viewportPointToLatLng)
+import Aerial.Types
+import Aerial.Update
+import Aerial.View
 import Earthquakes
 import Html exposing (..)
 
@@ -19,9 +23,6 @@ import Aerial.View
 -- import Html.Events exposing (..)
 
 import AddPinPlugin
-
-
--- MODEL
 
 
 type alias Model =
@@ -142,3 +143,8 @@ view model =
         div []
             [ Html.map AerialMsg <| aerialView
             ]
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Earthquakes.subscriptions model.earthquakes |> Sub.map EarthquakesMsg

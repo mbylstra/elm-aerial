@@ -3,12 +3,32 @@ module Earthquakes exposing (..)
 import Aerial.Geo exposing (LatLng)
 import Aerial.Markers exposing (markerHolder, simpleMarker)
 import Aerial.Types
+import AnimationFrame
 import GeoJson exposing (FeatureObject, GeoJson, GeoJsonObject(FeatureCollection))
 import Html exposing (Html, div, span, text)
 import Html.Attributes exposing (style)
 import Http
 import Json.Decode as Json
 import RemoteData exposing (RemoteData(Loading), RemoteData(Success), WebData)
+import Time exposing (Time, every, millisecond, second)
+
+
+-- MODEL
+
+
+frameDurationWorldMinutes : Int
+frameDurationWorldMinutes =
+    60
+
+
+frameDurationWorldMillis : Int
+frameDurationWorldMillis =
+    frameDurationWorldMinutes * 60 * 1000
+
+
+
+--one day
+-- one hour
 
 
 urlPastWeek4pt5GeoJson : String
@@ -39,14 +59,15 @@ type alias Earthquake =
 
 
 type alias Model =
-    { earthquakes :
+    { earthquakesResponse :
         WebData (List Earthquake)
-        -- , currentTime : Int
+    , currentTime : Int
     }
 
 
 type Msg
     = DataResponse (WebData (List Earthquake))
+    | Tick Time
 
 
 empty : Html msg
@@ -71,7 +92,7 @@ getGeojson =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { earthquakes = Loading }
+    ( { earthquakesResponse = Loading, currentTime = 0 }
     , getGeojson
     )
 
@@ -79,23 +100,63 @@ init =
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        DataResponse earthquakes ->
-            { model | earthquakes = earthquakes }
+        DataResponse earthquakesResponse ->
+            let
+                model2 =
+                    { model | earthquakesResponse = earthquakesResponse }
+            in
+                case earthquakesResponse of
+                    Success earthquakes ->
+                        { model2 | currentTime = List.head earthquakes |> Maybe.map .time |> Maybe.withDefault -1 }
+
+                    _ ->
+                        model2
+
+        Tick _ ->
+            case model.earthquakesResponse of
+                Success _ ->
+                    { model | currentTime = model.currentTime + frameDurationWorldMillis }
+
+                _ ->
+                    model
 
 
 view : Aerial.Types.Model -> Model -> Html Msg
 view aerialModel model =
-    case model.earthquakes of
+    case model.earthquakesResponse of
         Success earthquakes ->
-            viewData aerialModel earthquakes
+            viewData aerialModel earthquakes model.currentTime
 
         _ ->
             empty
 
 
-viewData : Aerial.Types.Model -> List Earthquake -> Html msg
-viewData aerialModel earthquakes =
-    div [] (List.map (earthquakeView aerialModel) earthquakes)
+isCurrentEarthquake : Int -> Int -> Earthquake -> Bool
+isCurrentEarthquake currentTime nextTime earthquake =
+    let
+        earthquakeTime =
+            -- Debug.log "earthquakeTime" <|
+            earthquake.time
+    in
+        (earthquake.time >= currentTime) && (earthquake.time < nextTime)
+
+
+viewData : Aerial.Types.Model -> List Earthquake -> Int -> Html msg
+viewData aerialModel earthquakes currentTime =
+    let
+        -- _ =
+        --     Debug.log "currentTime" currentTime
+        nextTime =
+            -- Debug.log "nextTime" <|
+            currentTime
+                + frameDurationWorldMillis
+
+        --
+        currentEarthquakes =
+            -- Debug.log "currentEarthquakes" <|
+            List.filter (isCurrentEarthquake currentTime nextTime) earthquakes
+    in
+        div [] (List.map (earthquakeView aerialModel) currentEarthquakes)
 
 
 earthquakeView : Aerial.Types.Model -> Earthquake -> Html msg
@@ -116,6 +177,7 @@ extractEarthquakes ( geojson, _ ) =
         FeatureCollection features ->
             List.map extractEarthquakeFromFeature features
                 |> List.filterMap (identity)
+                |> List.reverse
 
         _ ->
             []
@@ -226,3 +288,8 @@ magnitudeToPixelRadius magnitude =
             10 ^ (magnitude - 1)
     in
         sqrt (linearValue / pi) |> round
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    AnimationFrame.diffs Tick
