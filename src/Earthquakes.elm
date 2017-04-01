@@ -11,7 +11,7 @@ import Http
 import Json.Decode as Json
 import RemoteData exposing (RemoteData(Loading), RemoteData(Success), WebData)
 import Svg exposing (Svg, g, svg)
-import Svg.Attributes exposing (fillOpacity, stroke, fill, style)
+import Svg.Attributes exposing (fillOpacity, strokeOpacity, stroke, fill, style)
 import Svg.Extra exposing (circle)
 import Time exposing (Time, every, millisecond, second)
 
@@ -376,6 +376,9 @@ earthquakeMarker model earthquake =
         currRadius =
             (toFloat radius) * fractionCompleted |> floor
 
+        opacity =
+            1.0 - fractionCompleted
+
         -- get completed percentage by
         -- getting earthquake start time,
         -- earthquake end time, current time
@@ -395,7 +398,25 @@ earthquakeMarker model earthquake =
         earthquakeColor =
             "rgb(198, 15, 61)"
     in
-        circle 0 0 currRadius [ stroke earthquakeColor, fill earthquakeColor, fillOpacity "0.2" ]
+        g []
+            [ circle
+                0
+                0
+                currRadius
+                [ stroke earthquakeColor
+                , fill earthquakeColor
+                  --, opacity |> toString |> strokeOpacity
+                , strokeOpacity "0"
+                , 0.5 * opacity |> toString |> fillOpacity
+                ]
+            , circle
+                0
+                0
+                2
+                [ fill earthquakeColor
+                , opacity * 4.0 |> toString |> fillOpacity
+                ]
+            ]
 
 
 
