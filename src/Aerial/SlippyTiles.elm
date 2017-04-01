@@ -45,7 +45,9 @@ slippyTileUrl subdomain { x, y, zoom } =
         ( xS, yS, zS ) =
             ( toString x, toString y, toString zoom )
     in
-        "http://" ++ subdomain ++ ".tile.osm.org/" ++ zS ++ "/" ++ xS ++ "/" ++ yS ++ ".png"
+        -- "http://" ++ subdomain ++ ".tile.osm.org/" ++ zS ++ "/" ++ xS ++ "/" ++ yS ++ ".png"
+        -- "http://" ++ subdomain ++ ".tile.osm.org/" ++ zS ++ "/" ++ xS ++ "/" ++ yS ++ ".png"
+        "https://api.mapbox.com/styles/v1/mbylstra/cj0qhl1vn006n2rnten7yv0nv/tiles/256/" ++ zS ++ "/" ++ xS ++ "/" ++ yS ++ "?access_token=pk.eyJ1IjoibWJ5bHN0cmEiLCJhIjoiY2lndTJkZWJwMGI0YnRwa25xbTVoNTdlZCJ9.uQx8jrqT8YKqhWtZ1YbPIA"
 
 
 getMapWidth : Int -> Float

@@ -2,19 +2,19 @@ module Aerial.View exposing (..)
 
 -- import Geo exposing (LatLng)
 
-import Html exposing (Html, div, img, input, text)
-import Html.Attributes exposing (class, draggable, src, style, type_, value)
-import Html.Events exposing (onInput, onMouseLeave, onMouseUp)
-import Html.Keyed
-import Maybe.Extra
 import Aerial.Model exposing (getDraggingOffset, latLngToViewportPoint)
-import MouseEvents exposing (onMouseEnter, relPos)
+import Aerial.MouseEventPositions exposing (onMouseDownGetPosition, onMouseMoveGetPosition)
 import Aerial.MouseWheel
 import Aerial.SlippyTiles exposing (SlippyTileNumber, latLngToSlippyTileNumber, slippyTileUrl)
 import Aerial.Types exposing (..)
 import Aerial.VectorMath exposing (Point2DInt, Vector2DInt)
 import Aerial.ViewModel exposing (TileViewModel, getTileViewModels)
-import Aerial.MouseEventPositions exposing (onMouseMoveGetPosition)
+import Html exposing (Html, div, img, input, text)
+import Html.Attributes exposing (class, draggable, src, style, type_, value)
+import Html.Events exposing (onInput, onMouseLeave, onMouseUp)
+import Html.Keyed
+import Maybe.Extra
+import MouseEvents exposing (onMouseEnter, relPos)
 
 
 type alias Config customMsg =
@@ -80,8 +80,7 @@ mapViewportView model config =
     in
         div
             [ class "aerial-viewport"
-            , MouseEvents.onMouseDown (MouseEvents.relPos >> MouseDown)
-              -- , MouseEvents.onMouseMove (MouseEvents.relPos >> MouseMove)
+            , onMouseDownGetPosition MouseDown
             , onMouseMoveGetPosition MouseMove
             , onMouseUp MouseUp
             , MouseEvents.onMouseLeave (MouseEvents.relPos >> MouseLeave)

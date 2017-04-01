@@ -2,8 +2,8 @@ module Aerial.SphericalMercator.Tests exposing (..)
 
 import Test exposing (..)
 import Expect
-import SphericalMercator exposing (latToProjectedRadians, latFromProjectedRadians, projectLatToMeters, projectLngToMeters, unprojectLatFromMeters)
-import Geo exposing (LatLng)
+import Aerial.SphericalMercator exposing (latToProjectedRadians, latFromProjectedRadians, projectLatToMeters, projectLngToMeters, unprojectLatFromMeters)
+import Aerial.Geo exposing (LatLng)
 
 
 million : Float

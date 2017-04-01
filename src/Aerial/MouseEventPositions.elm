@@ -72,6 +72,16 @@ onMouseMove positionDecoder tagger =
     on "mousemove" (Decode.map tagger positionDecoder)
 
 
+onMouseDown : Decoder Position -> (Position -> msg) -> Html.Attribute msg
+onMouseDown positionDecoder tagger =
+    on "mousedown" (Decode.map tagger positionDecoder)
+
+
 onMouseMoveGetPosition : (Position -> msg) -> Html.Attribute msg
 onMouseMoveGetPosition =
     onMouseMove mousePositionDecoder
+
+
+onMouseDownGetPosition : (Position -> msg) -> Html.Attribute msg
+onMouseDownGetPosition =
+    onMouseDown mousePositionDecoder

@@ -2,12 +2,12 @@ module Aerial.SlippyTiles.Tests exposing (..)
 
 import Test exposing (..)
 import Expect
-import SlippyTiles
+import Aerial.SlippyTiles
     exposing
         ( latLngToWorldPixelPoint
         , tileSize
         )
-import Geo exposing (LatLng)
+import Aerial.Geo exposing (LatLng)
 
 
 melbourneLatLng : LatLng
