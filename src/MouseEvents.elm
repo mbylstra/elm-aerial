@@ -1,1 +1,0 @@
-/home/michael/code/third-party/elm-mouse-events/src/MouseEvents.elm
