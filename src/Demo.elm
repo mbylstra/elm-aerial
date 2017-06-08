@@ -2,27 +2,16 @@ module Demo exposing (Model, Msg, init, update, view, subscriptions)
 
 -- import Geo exposing (LatLng)
 
-import AddPinPlugin
 import Aerial.Model exposing (viewportPointToLatLng)
 import Aerial.Types
 import Aerial.Update
 import Aerial.View
 import Earthquakes
 import Html exposing (..)
-
-
--- import Html.Attributes exposing (..)
-
 import Aerial.Model exposing (viewportPointToLatLng)
 import Aerial.Types
 import Aerial.Update
 import Aerial.View
-
-
--- import Mouse
--- import Html.Events exposing (..)
-
-import AddPinPlugin
 
 
 type alias Model =
@@ -30,9 +19,6 @@ type alias Model =
     , prop2 : Int
     , aerialModel :
         Aerial.Types.Model
-        -- , markers : List LatLng
-    , addPinPlugin :
-        AddPinPlugin.Model
     , earthquakes : Earthquakes.Model
     }
 
@@ -40,11 +26,6 @@ type alias Model =
 setAerialModel : Aerial.Types.Model -> Model -> Model
 setAerialModel aerialModel model =
     { model | aerialModel = aerialModel }
-
-
-setAddPinPlugin : AddPinPlugin.Model -> Model -> Model
-setAddPinPlugin addPinPlugin model =
-    { model | addPinPlugin = addPinPlugin }
 
 
 init : ( Model, Cmd Msg )
@@ -57,7 +38,6 @@ init =
         , prop2 = 2
         , aerialModel =
             Aerial.Model.init
-        , addPinPlugin = AddPinPlugin.init
         , earthquakes = earthquakes
         }
             ! [ Cmd.map EarthquakesMsg earthquakesMsg ]
@@ -69,7 +49,6 @@ init =
 
 type Msg
     = AerialMsg (Aerial.Types.Msg Msg)
-    | AddPinPluginMsg AddPinPlugin.Msg
     | EarthquakesMsg Earthquakes.Msg
 
 
@@ -83,9 +62,6 @@ update msg model =
                         |> setAerialModel aerialModel
                         |> handleAerialReturn aerialReturn
 
-        AddPinPluginMsg addPinPluginMsg ->
-            { model | addPinPlugin = AddPinPlugin.update addPinPluginMsg model.addPinPlugin model.aerialModel }
-
         EarthquakesMsg earthquakesMsg ->
             { model | earthquakes = Earthquakes.update earthquakesMsg model.earthquakes }
 
@@ -96,7 +72,6 @@ handleAerialReturn return model =
         Aerial.Types.OutMsg outMsg ->
             model
                 |> updateWithAerialOutMsg outMsg
-                |> setAddPinPlugin (AddPinPlugin.updateWithAerialOutMsg outMsg model.aerialModel model.addPinPlugin)
 
         Aerial.Types.SelfMsg msg ->
             update msg model
@@ -116,32 +91,19 @@ view : Model -> Html Msg
 view model =
     let
         pluginLayerView =
-            -- Html.map AddPinPluginMsg <|
             Html.map EarthquakesMsg <|
-                --AddPinPlugin.view model.addPinPlugin aerialModel
                 Earthquakes.view model.aerialModel model.earthquakes
 
-        -- So, we should be able to pass this to Config
         aerialViewConfig : Aerial.View.Config Msg
         aerialViewConfig =
             { pluginLayerView = pluginLayerView }
 
-        -- { -- markerView = AddPinPlugin.markerView
-        --   -- , markers = model.markers
-        --   pluginLayerView =
-        --     mappedView
-        --     -- unMappedView
-        --     -- Html.map AddPinPluginMsg <|
-        -- }
-        -- Html.map
-        -- mappedView
-        -- AerialMsg
-        -- Hmm, how do we go back the other way???
         aerialView =
             (Aerial.View.view aerialViewConfig model.aerialModel)
     in
         div []
             [ Html.map AerialMsg <| aerialView
+            , text "hello"
             ]
 
 
